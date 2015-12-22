@@ -1,0 +1,438 @@
+Note: steps done to compile the DLL:
+
+1) Install Cygwin (if not already done)
+
+2) copy the Makefile from the archived lgp_install/ to the /lgp folder (for example, or any folder accessible to CygWin (note CygWin can access any local drive using /cygdrive/c for C:\ and so on for the next disk drives or partitions)).
+
+3) extract the Link Grammar Parser tar.gz archive from "http://www.link.cs.cmu.edu/link/" (download the parser's source code) into /lgp (the following commands are given for the version 4.0 of the Link Grammar Parser, this needs to be updated accordingly if another version is used)
+
+4) In CygWin, from a UNIX shell, unzip the tar archive by typing ('$' is the shell prompt):
+$ gunzip system-4_0_tar.gz
+
+5) From there, still in the UNIX shell, type:
+$ tar -xf system-4_0_tar
+This will extract the Link Grammar Parser libraries by recreating the tree structure of the source files.
+
+6) Copy the archived lgp_install/src/lgp.c in the /lgp/system-4.0/link-4.0/src/ directory
+
+7) Copy the archived lgp_install/include/lgp.h in the /lgp/system-4.0/link-4.0/include/ directory
+
+8) Apply an adaptation patch to the /lgp/system-4.0/link-4.0/src/utilities.c files
+This can be done manually (recommended):
+   Find the declaration of the "FILE *dictopen" function
+   Go to the following block of instructions (or similar, if using a release different from 4.0)
+if ((fp = fopen(completename, how)) != NULL) {
+    printf("   Opening %s\n", completename);
+    return fp;
+}
+Add "if (verbosity>0)" before the printf command and replace utilities with the updated c code.
+The other way to patch this file is to do it by a sed command (not recommended):
+$ cd /lgp/system-4.0/link-4.0/src
+$ cat utilities.c | sed -e '/^FILE[[:space:]]*\*[[:space:]]*dictopen/,/^}/{
+s/ printf[[:space:]]*(.*[^@]$/ if (verbosity>0) & \/\/ Added by Lionel Ains. This will make the API be silent when called from SWI-Prolog@/1
+}' > utilities2.c
+The resut is then in "utilities2.c"
+Just rename and overwrite the original utilities.c with the following UNIX command:
+$ mv utilities2.c utilities.c
+This will work if patching the system-4.0 and system-4.1 archives, however, it may not fix further or previous releases.
+
+9) Apply a compatibility patch to the constituents.c file:
+$ cd /lgp/system-4.0/link-4.0/src
+$ cat constituents.c | sed -e '/#include.*constituents.h/{
+s/constituents.h/constituents-swi-prolog.h/1
+}' > constituents-swi-prolog.c
+$ echo "
+char * linkage_create_constituent_term(Linkage linkage) {
+  return print_flat_constituents(linkage);
+}
+" >> constituents-swi-prolog.c
+
+10) Adapt constituents.h accordingly:
+$ cd /lgp/system-4.0/link-4.0/include
+$ cat constituents.h | sed -e 's/CONSTITUENTSH/CONSTITUENTSSWIH/g' -e '/^#endif/i\
+char * linkage_create_constituent_term(Linkage linkage);\
+\
+' > constituents-swi-prolog.h
+
+11) To double check that no other reference to constituents.[ch] has to be updated, type the following UNIX commands:
+$ cd /lgp/system-4.0/link-4.0/
+$ find ./ -name '*.[ch]*' -type f 2>/dev/null | xargs grep 'constituents.[ch]'
+This should only show a line like "#include "constituents.c" in ./src/constituents.c
+If not (in system-4.1 version, links-includes.h has also references to constituents.h),
+for each different file, perform the following command (replacing "link-includes" by the name of the source file):
+$ cat link-includes.h | sed 's/constituents.h/constituents-swi-prolog.h/g' > link-includes.h.new
+$ mv link-includes.h.new link-includes.h
+
+12) Install SWI-Prolog (if it is not already installed!) and update the /lgp/Makefile to have the corresponding path for SWI in the SWIHOME variable
+
+13) Execute make from the directory where the Makefile is (/lgp or other if the lgp source files have been installed somewhere else)
+
+14) If make returns: "Make: Don't know how to make /lgp/system-4.1/link-4.1/src/lgp.c.  Stop.", it shows that lgp has not been installed in /lgp. It is thus necessary to update the INC, SRC and OBJ section to reflect the directories where lgp has been installed
+
+15) Note: on some systems, make will return "~myuser/pl/include/SWI-Prolog.h: No such file or directory" this maybe either because the character ~ is not allowed (change the SWIHOME variable, within Makefile, with the full path, eg: "/home/usr/myuser/pl/include"
+
+16) Currently, in the version 4.1 of lgp, there is a wrong #endif directive in "structures.h". The gcc compiler may complain about "system-4.1/link-4.1/include/structures.h:477:8: warning: extra tokens at end of #endif directive"
+Simply change the last line of the file:
+#endif _STRUCTURESH_
+by
+#endif // _STRUCTURESH_
+That should keep the compiler quiet
+
+17) If when trying to execute make, a warning of double definition of TRUE and FALSE occurs, the following should fix that:
+In /lgp/system-4.0/link-4.0/include/structures.h, the declarations of TRUE and FALSE have been adapted to be skipped if SWI-Prolog is already included (the same definition would be done twice, otherwise):
+#ifndef _FLI_H_INCLUDED
+#define TRUE  1
+#define FALSE 0
+#endif
+
+18) Then... if getting a problem of
+Cannot export _bss_end__: symbol not defined
+Cannot export _bss_start__: symbol not defined
+Cannot export _data_end__: symbol not defined
+Cannot export _data_start__: symbol not defined
+collect2: ld returned 1 exit status
+make: *** [lgp] Error 1
+While trying the makefile, the "__declspec(dllexport)" options should be prefixed to the function prototypes in lgp.h
+This can also be due to a missing "#include <windows.h>" in lgp.h
+
+19) If, on the contrary, the compiler complains about the __declspec(dllexport) directive ("system-4.1/link-4.1/include/lgp.h:6: parse error before "__declspec""), just add the following section:
+#ifndef WIN32
+#define __declspec(any)
+#endif
+or also:
+#if defined(WIN32)
+#else
+#define __declspec(any)
+#endif
+If this still happens, just remove the #ifndef and #endif line surrounding the #define (in the first version of the directives).
+
+20) If getting something like: "system-4.1/link-4.1/src/lgp.c:2009: parse error before "lgp_init_dll"" complaining about undeclared type in lgp_init_dll, just surround lgp_init_dll and #include <windows.h> by:
+#ifdef WIN32
+and
+#endif
+
+
+21) Update the Makefile to change the 3 paths related to the Link Grammar Parser, indeed that they also contain the version of the Link Grammar Parser installed. The three variables to update are:
+SRC
+INC
+OBJ
+
+22) Finally, by executing "make" on the Cygwin command line, from the "/lgp" directory, the "/lgp/lgp.dll" file should be created, containing the DLL.
+This DLL will be needed inside the SWI-Prolog at run time, to allow the Prolog engine to load the module "lgp_lib.pl"
+
+23) Copy /lgp/lgp.dll to the SWI-Prolog execution directory (typically, SWI-Prolog's home directory)
+
+24) Copy /bin/cygwin1.dll to the same directory (CygWin DLLs need the cygwin1.dll file at runtime).
+
+25) To test the library on SWI-Prolog, try the following commands:
+?- ['lgp_lib'].
+
+%  library(shlib) compiled into shlib 0.01 sec, 9,176 bytes
+% c:/program files/swi-prolog/lgp_lib.pl compiled into lgp_lib 0.01 sec, 28,172 bytes
+
+?- lgp_lib:create_dictionary('4.0.dict', '4.0.knowledge', '4.0.constituent-knowledge', '4.0.affix', Dictionary_handle).
+
+Dictionary_handle = '$dictionary'(0)
+
+Yes
+% Note: If an exception "cant_create" is reported, make sure that the words/ subdirectory is present in the current directory, and that the 4 specified database files (dict, knowledge, constituent-knowledge and affix) are also referenced properly from the current directory.
+% If SWI-Prolog is killed during this command, check that the content of words/ is matching with the LGP source files used to build lgp.dll (even if the version appears to be the same, it is always better to reextract the content of words/ when extracting the system-?.?.tar.gz archive
+
+
+?- lgp_lib:create_parse_options([disjunct_cost=2, min_null_count=0, max_null_count=0, linkage_limit=100, max_parse_time=10, max_memory=128000000], PO_handle).
+
+PO_handle = '$options'(0) 
+
+Yes
+?- lgp_lib:create_parse_options([disjunct_cost=3, min_null_count=1, max_null_count=250, linkage_limit=100, max_parse_time=10, max_memory=128000000], Panic_PO_handle).
+
+Panic_PO_handle = '$options'(1) 
+
+Yes
+?- lgp_lib:enable_panic_on_parse_options($Panic_PO_handle).
+
+Yes
+?- lgp_lib:create_sentence('This is the first recorded sentence', $Dictionary_handle, Sentence_0).
+
+Sentence_0 = '$sentence'(0) 
+
+Yes
+?- lgp_lib:create_linkage_set($Sentence_0, $PO_handle, Linkage_set_handle_0).
+
+Linkage_set_handle_0 = '$linkageset'(0) 
+
+Yes
+?- lgp_lib:create_sentence('The software is now fully installed', $Dictionary_handle, Sentence_1).
+
+Sentence_1 = '$sentence'(1) 
+
+Yes
+?- lgp_lib:create_linkage_set($Sentence_1, $PO_handle, Linkage_set_handle_1).
+
+Linkage_set_handle_1 = '$linkageset'(1) 
+
+Yes
+?- get_nb_parse_options(Nb).
+
+Nb = 2 
+
+Yes
+?- get_handles_nb_references_parse_options(Handle, Nb).
+
+Handle = ['$options'(1), '$options'(0)]
+Nb = [0, 2] 
+
+Yes
+?- get_nb_sentences(Nb).
+
+Nb = 2 ;
+
+No
+?- get_handles_nb_references_sentences(Handle, Nb).
+
+Handle = ['$sentence'(1), '$sentence'(0)]
+Nb = [1, 1] 
+
+Yes
+?- get_handles_sentences(HS).
+
+HS = ['$sentence'(1), '$sentence'(0)] 
+
+Yes
+?- lgp_lib:get_linkage($Linkage_set_handle_1, Linkage).
+Linkage = [link([m], connection(e-[m], fully(_G608), installed(v))), link([m], connection(e-[], now(e), installed(v))), link([m], connection(p-[v], is(v), installed(v))), link([m], connection(s-[s], software(n), is(v))), link([m], connection(d-[m|...], the(_G516), software(n))), link([m], connection(w-[...], 'left-wall'(_G493), software(n))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))] ;
+
+No
+% This is the list of links in this linkage set. SWI-Prolog doesn't print this list in a readable way, so the following will extract one member after the other.
+?- help(member).
+member(?Elem, ?List)
+    Succeeds  when Elem can be unified with one of the members  of List.
+    The predicate can be used with any instantiation pattern.
+
+
+Yes
+?- member(One_link, $Linkage).
+
+One_link = link([m], connection(e-[m], fully(_G355), installed(v))) ;
+
+One_link = link([m], connection(e-[], now(e), installed(v))) ;
+
+One_link = link([m], connection(p-[v], is(v), installed(v))) ;
+
+One_link = link([m], connection(s-[s], software(n), is(v))) ;
+
+One_link = link([m], connection(d-[m, u], the(_G447), software(n))) ;
+
+One_link = link([m], connection(w-[d], 'left-wall'(_G470), software(n))) ;
+
+One_link = link([], connection(rw-[], 'left-wall'(_G487), 'right-wall'(_G489))) ;
+
+No
+% We now go back the the sentence 0, recorded in linkage set 0, and fail get_linkage to see the 3 different linkages in the linkage set
+?- lgp_lib:get_linkage($Linkage_set_handle_0, Linkage).
+
+Linkage = [link([m], connection(e-[], first(a), recorded(v))), link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(d-[s], the(_G622), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G543), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))] ;
+
+Linkage = [link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(l-[], the(_G645), first(a))), link([m], connection(d-[s], the(_G622), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G543), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))] ;
+
+Linkage = [link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(an-[], first(n), sentence(n))), link([m], connection(d-[s], the(_G622), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G543), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))] ;
+
+No
+% Let's now look at the last (third) possible linkage set, which is the last one returned by get_linkage/2 before failing
+?- member(One_link, $Linkage).
+
+One_link = link([m], connection(a-[], recorded(v), sentence(n))) ;
+
+One_link = link([m], connection(an-[], first(n), sentence(n))) ;
+
+One_link = link([m], connection(d-[s], the(_G403), sentence(n))) ;
+
+One_link = link([m], connection(o-[s, t], is(v), sentence(n))) ;
+
+One_link = link([m], connection(s-[s, _G452, b], this(p), is(v))) ;
+
+One_link = link([m], connection(w-[d], 'left-wall'(_G481), this(p))) ;
+
+One_link = link([], connection(rw-[], 'left-wall'(_G498), 'right-wall'(_G500))) ;
+
+No
+% The real power of the combination of the Prolog engine and the Link Grammar Parser is the ability to look for a specific link in the sentence. Prolog will thus find the linkage that matches the pattern searched for, within the whole linkage set:
+?- lgp_lib:get_linkage($Linkage_set_handle_0, Linkage), member(One_link, Linkage), One_link=link([_], connection(Link_type-Link_subtype_list, is(Type_a), Word_b)).
+
+Linkage = [link([m], connection(e-[], first(a), recorded(v))), link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(d-[s], the(_G1426), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1347), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
+One_link = link([m], connection(o-[s, t], is(v), sentence(n)))
+Link_type = o
+Link_subtype_list = [s, t]
+Type_a = v
+Word_b = sentence(n) ;
+
+Linkage = [link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(l-[], the(_G1449), first(a))), link([m], connection(d-[s], the(_G1426), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1347), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
+One_link = link([m], connection(o-[s, t], is(v), sentence(n)))
+Link_type = o
+Link_subtype_list = [s, t]
+Type_a = v
+Word_b = sentence(n) ;
+
+Linkage = [link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(an-[], first(n), sentence(n))), link([m], connection(d-[s], the(_G1426), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1347), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
+One_link = link([m], connection(o-[s, t], is(v), sentence(n)))
+Link_type = o
+Link_subtype_list = [s, t]
+Type_a = v
+Word_b = sentence(n) ;
+
+No
+% The expression above looks for all different links concerning is, and returns the linkage (Linkage), the link (One_link), the type of the link (Link_type) and its subtype if any (Link_subtype_list), as well as the type found for the word 'is' (Type_a) and the word link to 'is' (in Word_b)
+% We can also look for all objects linked with the:
+?- lgp_lib:get_linkage($Linkage_set_handle_0, Linkage), member(One_link, Linkage), One_link=link([_], connection(_-_, the(_Type_a), Word_b)).
+
+Linkage = [link([m], connection(e-[], first(a), recorded(v))), link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(d-[s], the(_G982), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1185), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
+One_link = link([m], connection(d-[s], the(_G982), sentence(n)))
+Word_b = sentence(n) ;
+
+Linkage = [link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(l-[], the(_G982), first(a))), link([m], connection(d-[s], the(_G1264), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1185), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
+One_link = link([m], connection(l-[], the(_G982), first(a)))
+Word_b = first(a) ;
+
+Linkage = [link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(l-[], the(_G1287), first(a))), link([m], connection(d-[s], the(_G982), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1185), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
+One_link = link([m], connection(d-[s], the(_G982), sentence(n)))
+Word_b = sentence(n) ;
+
+Linkage = [link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(an-[], first(n), sentence(n))), link([m], connection(d-[s], the(_G982), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1185), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
+One_link = link([m], connection(d-[s], the(_G982), sentence(n)))
+Word_b = sentence(n) ;
+
+No
+% Now, let's have a look at the linkage set objects existing in the memory:
+?- get_handles_linkage_sets(HLS).
+
+HLS = ['$linkageset'(1), '$linkageset'(0)] 
+
+Yes
+% We can consult each linkage set to know how many linkages it contains, which sentence it has been created from, and which parse options it used:
+?- get_full_info_linkage_sets($linkageset'(1), PLS1).
+
+PLS1 = [num_linkage=1, sentence_handle='$sentence'(1), parse_options_handle='$options'(0)] 
+
+Yes
+% An other solution is to get the information about all linkage sets using get_full_info_linkage_sets/1
+?- get_full_info_linkage_sets(Full_info).
+
+Full_info = [[handle='$linkageset'(1), num_linkage=1, sentence_handle='$sentence'(1), parse_options_handle='$options'(0)], [handle='$linkageset'(0), num_linkage=3, sentence_handle='$sentence'(0), parse_options_handle='$options'(0)]] 
+
+Yes
+% The following checks that the reference counts are updated when freeing up objects
+?- get_handles_nb_references_sentences(Handle, Nb).
+
+Handle = ['$sentence'(1), '$sentence'(0)]
+Nb = [1, 1] 
+
+Yes
+?- delete_linkage_set($Linkage_set_handle_0).
+
+Yes
+% After linkage set 0 has been removed, sentence 0 is not referenced anymore
+?- get_handles_nb_references_sentences(Handle, Nb).
+
+Handle = ['$sentence'(1), '$sentence'(0)]
+Nb = [1, 0] 
+
+Yes
+% We can't delete sentence 1 because it is still referenced
+?- delete_sentence('$sentence'(1)).
+ERROR: Unhandled exception: lgp_api_error(sentence, still_referenced)
+
+% However, we can now delete sentence 0
+?- delete_sentence('$sentence'(0)).
+
+Yes
+% Dictionary 1 is now only referenced by sentence 1 (by only one object)
+?- get_handles_nb_references_dictionaries(Handle, Nb).
+
+Handle = ['$dictionary'(1)]
+Nb = [1] 
+
+Yes
+?- delete_all_sentences.
+
+Yes
+% Returns yes, but actually failed because of one sentence '$sentence'(1) that is still referenced
+
+% Let's free up the memory by getting rid of the linkage sets, sentences and parse options
+?- delete_all_linkage_sets.
+
+Yes
+?- get_full_info_linkage_sets(Full_info).
+
+Full_info = [] 
+
+Yes
+?- delete_all_sentences.
+
+Yes
+?- get_nb_sentences(Nb).
+
+Nb = 0 
+
+Yes
+?- delete_all_parse_options.
+
+Yes
+?- get_handles_parse_options(HPO).
+
+HPO = [] 
+
+Yes
+% We now only have a dictionary object in memory:
+?- get_handles_dictionaries(HD).
+
+HD = ['$dictionary'(0)] 
+
+Yes
+% Let's delete it as well
+?- delete_dictionary('$dictionary'(0)).
+
+Yes
+?- get_handles_dictionaries(HD).
+
+HD = [] 
+
+Yes
+% Note: when all dictionaries have been deleted, an automatic memory leak check is performed
+% In case some memory could not be deallocated properly, an exception "lgp_api(external_space, leak)" will be raised.
+
+% We now query Prolog to know which are the foreign libraries loaded
+?- current_foreign_library(Lib, Predicates).
+
+Lib = lgp
+Predicates = [lgp_lib:create_dictionary(_G454, _G455, _G456, _G457, _G458), lgp_lib:delete_dictionary(_G466), lgp_lib:delete_all_dictionaries, lgp_lib:get_nb_dictionaries(_G480), lgp_lib:get_handles_dictionaries(_G488), lgp_lib:create_parse_options_(_G496), lgp_lib:delete_parse_options(_G504), lgp_lib:delete_all_parse_options, ... :...|...] 
+
+Yes
+% Let's unload the lgp_lib from the memory (this will deallocate the whole space taken by the DLL)
+?- unload_foreign_library(lgp).
+
+Yes
+% We can double-check that the lgp library is not in memory anymore:
+?- current_foreign_library(Lib, Predicates).
+
+No
+?- 
+
+Sanity test package: lib_lgp_test.pl
+To perform basic sanity tests on the lib_lgp.pl library, load lgp_lib_test.pl (which will, in turn, load lgp_lib so it's important to make sure that lgp_lib.pl will be found when needed - which means that the best is to have them stored in the same directory and to cd into this directory before loading lgp_lib_test.pl).
+When lgp_lib_test has loaded, just run "go." to perform the tests. This should take from a few seconds to several minutes, depending on the speed of your processor and you disk drive (it takes 23s on my Pentium III 600 Mhz).
+Note: the whole package should run without any error at all.
+The worst case is if you get the following exception: lgp_api_error(memory_leak)
+This exception should then come out all the time if you try to re-run the sanity tests by typing 'go.' one more time. You'll see the tests failing at the very beginning with an error message:
+*** Exception 'lgp_api_error(memory_leak)' raised in family Cleanup
+
+This will probably show that a bug is hidden somewhere. If you can reproduce, please let me know and I will try to fix it when I have some spare time.
+The only way I could find to create a memory leak so far was to internally add breakpoints in the foreign code and to kill (^C) the execution while the processing is stopped! This should not occur in theory on a run-time version without breakpoints.
+
+/**
+ * Please report any bug or problem to lains@carmail.com
+ * I will try to update the package for this library
+ * So far, this has been tested with the following:
+ * CygWin (DLL version) 1.1.3, 1.2.8, 1.3.2 and 1.3.10
+ * Link Grammar Parser 4.0 and 4.1
+ * SWI-Prolog 3.3.7, 3.3.8, 3.3.9, 3.3.10, 3.4.5 and 5.0.6
+**/
