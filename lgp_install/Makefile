@@ -14,42 +14,94 @@
 # On at least one system (BSDI 3.0) I had to use gmake instead of make
 # to get this makefile to work.     -- D. Sleator, June 2000
 
-SRC         = /lgp/system-4.1/link-4.1/src
-INC         = /lgp/system-4.1/link-4.1/include
-OBJ         = /lgp/system-4.1/link-4.1/obj
-SWIHOME     = /cygdrive/c/Program\ Files/SWI-Prolog
+SRC         = system-4.1/link-4.1/src
+INC         = system-4.1/link-4.1/include
+OBJ         = system-4.1/link-4.1/obj
+SWIHOME     = /usr/lib/swi-prolog
+#Note: probably /cygdrive/c/Program\ Files/SWI-Prolog for cygwin
+#or C:\Program Files\SWI-Prolog for VC++/lcc
 BIN         = .
 CC          = gcc
 CFLAGS      = -c -g -Wall -O
-CLDFLAGS    = -O -g 
+CLDFLAGS    = -O -g
+UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.*$$/cygwin/' || echo unknown)
+ifeq ($(UNAME),linux)
+LIBEXT      = so
+LIBPL       = $(SWIHOME)/lib/i386/libpl.a
+else
+ifeq ($(UNAME),cygwin)
+LIBEXT      = dll
+LIBPL       = $(SWIHOME)/bin/LIBPL.DLL
+else
+$(error Unsupported platform)
+endif
+endif
 
 INCLUDES    =\
-${INC}/lgp.h\
-${INC}/link-includes.h ${INC}/structures.h ${INC}/api-structures.h\
-${INC}/api.h ${INC}/externs.h ${INC}/analyze-linkage.h\
-${INC}/and.h ${INC}/build-disjuncts.h ${INC}/count.h\
-${INC}/error.h ${INC}/extract-links.h ${INC}/fast-match.h\
-${INC}/idiom.h ${INC}/linkset.h ${INC}/massage.h\
-${INC}/post-process.h ${INC}/pp_knowledge.h ${INC}/pp_lexer.h\
-${INC}/pp_linkset.h ${INC}/preparation.h ${INC}/print.h\
-${INC}/prune.h ${INC}/read-dict.h ${INC}/resources.h\
-${INC}/string-set.h ${INC}/tokenize.h ${INC}/utilities.h\
-${INC}/constituents-swi-prolog.h ${INC}/word-file.h ${INC}/print-util.h
+$(INC)/lgp.h \
+$(INC)/link-includes.h \
+$(INC)/structures.h \
+$(INC)/api-structures.h \
+$(INC)/api.h \
+$(INC)/externs.h \
+$(INC)/analyze-linkage.h \
+$(INC)/and.h \
+$(INC)/build-disjuncts.h \
+$(INC)/count.h \
+$(INC)/error.h \
+$(INC)/extract-links.h \
+$(INC)/fast-match.h \
+$(INC)/idiom.h \
+$(INC)/linkset.h \
+$(INC)/massage.h \
+$(INC)/post-process.h \
+$(INC)/pp_knowledge.h \
+$(INC)/pp_lexer.h \
+$(INC)/pp_linkset.h \
+$(INC)/preparation.h \
+$(INC)/print.h \
+$(INC)/prune.h \
+$(INC)/read-dict.h \
+$(INC)/resources.h \
+$(INC)/string-set.h \
+$(INC)/tokenize.h \
+$(INC)/utilities.h \
+$(INC)/constituents-swi-prolog.h \
+$(INC)/word-file.h \
+$(INC)/print-util.h
 
 OBJECTS     =\
-${OBJ}/lgp.o ${OBJ}/prune.o ${OBJ}/and.o\
-${OBJ}/post-process.o ${OBJ}/pp_lexer.o ${OBJ}/resources.o\
-${OBJ}/analyze-linkage.o ${OBJ}/string-set.o ${OBJ}/pp_linkset.o\
-${OBJ}/pp_knowledge.o ${OBJ}/error.o ${OBJ}/word-file.o\
-${OBJ}/utilities.o ${OBJ}/tokenize.o ${OBJ}/command-line.o\
-${OBJ}/read-dict.o ${OBJ}/print.o ${OBJ}/preparation.o\
-${OBJ}/api.o ${OBJ}/massage.o ${OBJ}/linkset.o\
-${OBJ}/idiom.o ${OBJ}/fast-match.o ${OBJ}/extract-links.o\
-${OBJ}/count.o ${OBJ}/build-disjuncts.o ${OBJ}/constituents-swi-prolog.o\
-${OBJ}/print-util.o
+$(OBJ)/lgp.o \
+$(OBJ)/prune.o \
+$(OBJ)/and.o \
+$(OBJ)/post-process.o \
+$(OBJ)/pp_lexer.o \
+$(OBJ)/resources.o \
+$(OBJ)/analyze-linkage.o \
+$(OBJ)/string-set.o \
+$(OBJ)/pp_linkset.o \
+$(OBJ)/pp_knowledge.o \
+$(OBJ)/error.o \
+$(OBJ)/word-file.o \
+$(OBJ)/utilities.o \
+$(OBJ)/tokenize.o \
+$(OBJ)/command-line.o \
+$(OBJ)/read-dict.o \
+$(OBJ)/print.o \
+$(OBJ)/preparation.o \
+$(OBJ)/api.o \
+$(OBJ)/massage.o \
+$(OBJ)/linkset.o \
+$(OBJ)/idiom.o \
+$(OBJ)/fast-match.o \
+$(OBJ)/extract-links.o \
+$(OBJ)/count.o \
+$(OBJ)/build-disjuncts.o \
+$(OBJ)/constituents-swi-prolog.o \
+$(OBJ)/print-util.o
 
-${BIN}/lgp:     ${OBJECTS}
-		${CC} -shared -Wall ${CLDFLAGS} ${OBJECTS} ${SWIHOME}/bin/LIBPL.DLL -o ${BIN}/lgp.dll
+${BIN}/lgp.${LIBEXT}: ${OBJECTS}
+		${CC} -shared -Wall ${CLDFLAGS} ${OBJECTS} ${LIBPL} -o ${BIN}/liblgp.${LIBEXT}
 
 ${OBJ}/lgp.o:   ${SRC}/lgp.c ${INCLUDES}
 		${CC} ${CFLAGS} -I${INC} -I${SWIHOME}/include ${SRC}/lgp.c -o ${OBJ}/lgp.o
@@ -136,4 +188,5 @@ ${OBJ}/print-util.o: ${SRC}/print-util.c ${INCLUDES}
 		${CC} ${CFLAGS} -I${INC} ${SRC}/print-util.c -o ${OBJ}/print-util.o
 
 clean:
-	/bin/rm ${OBJ}/*.o
+	/bin/rm -f $(OBJ)/*.o
+	/bin/rm -f liblgp.$(LIBEXT)
