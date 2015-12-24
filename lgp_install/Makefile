@@ -14,10 +14,10 @@
 # On at least one system (BSDI 3.0) I had to use gmake instead of make
 # to get this makefile to work.     -- D. Sleator, June 2000
 
-SRC         = system-4.1/link-4.1/src
-INC         = system-4.1/link-4.1/include
-OBJ         = system-4.1/link-4.1/obj
-SWIHOME     = /usr/lib/swi-prolog
+SRC         ?= system-4.1/link-4.1/src
+INC         ?= system-4.1/link-4.1/include
+OBJ         ?= system-4.1/link-4.1/obj
+SWIHOME     ?= /usr/lib/swi-prolog
 #Note: probably /cygdrive/c/Program\ Files/SWI-Prolog for cygwin
 #or C:\Program Files\SWI-Prolog for VC++/lcc
 BIN         = .
@@ -27,11 +27,11 @@ CLDFLAGS    = -O -g
 UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.*$$/cygwin/' || echo unknown)
 ifeq ($(UNAME),linux)
 LIBEXT      = so
-LIBPL       = $(SWIHOME)/lib/i386/libpl.a
+LIBPL       ?= $(SWIHOME)/lib/i386/libpl.a
 else
 ifeq ($(UNAME),cygwin)
 LIBEXT      = dll
-LIBPL       = $(SWIHOME)/bin/LIBPL.DLL
+LIBPL       ?= $(SWIHOME)/bin/LIBPL.DLL
 else
 $(error Unsupported platform)
 endif
