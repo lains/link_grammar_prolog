@@ -101,7 +101,7 @@ $(OBJ)/constituents-swi-prolog.o \
 $(OBJ)/print-util.o
 
 ${BIN}/lgp.${LIBEXT}: ${OBJECTS}
-		${CC} -shared -Wall ${CLDFLAGS} ${OBJECTS} ${LIBPL} -o ${BIN}/liblgp.${LIBEXT}
+		${CC} -shared -Wall ${CLDFLAGS} ${OBJECTS} ${LIBPL} -o $@
 
 ${OBJ}/lgp.o:   ${SRC}/lgp.c ${INCLUDES}
 		${CC} ${CFLAGS} -I${INC} -I${SWIHOME}/include ${SRC}/lgp.c -o ${OBJ}/lgp.o
