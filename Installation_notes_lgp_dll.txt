@@ -60,8 +60,7 @@ $ find ./ -name '*.[ch]*' -type f 2>/dev/null | xargs grep 'constituents.[ch]'
 This should only show a line like "#include "constituents.c" in ./src/constituents.c
 If not (in system-4.1 version, links-includes.h has also references to constituents.h),
 for each different file, perform the following command (replacing "link-includes" by the name of the source file):
-$ cat link-includes.h | sed 's/constituents.h/constituents-swi-prolog.h/g' > link-includes.h.new
-$ mv link-includes.h.new link-includes.h
+$ sed -i -e 's/constituents.h/constituents-swi-prolog.h/g' link-includes.h
 
 12) Install SWI-Prolog (if it is not already installed!) and update the /lgp/Makefile to have the corresponding path for SWI in the SWIHOME variable
 
