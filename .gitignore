@@ -30,3 +30,11 @@
 
 # Debug files
 *.dSYM/
+
+# Self generated files and folders
+/.applied_patches
+/lg-source
+/lg-source-4.1b
+
+# Expected downloaded files
+/lg-source-archive-4.1b.tar.gz
