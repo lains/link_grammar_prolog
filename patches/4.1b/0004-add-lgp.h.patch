@@ -1,0 +1,10 @@
+--- /dev/null	2015-12-22 19:48:05.045381328 +0100
++++ b/include/lgp.h	2015-12-22 21:44:10.726395705 +0100
+@@ -0,0 +1,7 @@
++#ifndef _LGP_H_INCLUDED
++#define _LGP_H_INCLUDED
++
++__declspec(dllexport) int main(int argc, char **argv);
++__declspec(dllexport) install_t install();
++
++#endif
