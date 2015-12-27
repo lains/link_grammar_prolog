@@ -22,10 +22,11 @@ endif
 
 TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
 
-all: lg-source/lgp.$(LIBEXT)
+all: lgp.$(LIBEXT)
 
-lg-source/lgp.$(LIBEXT): patched_link_grammar
-	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lg-source/lgp.$(LIBEXT)
+lgp.$(LIBEXT): patched_link_grammar
+	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(LIBEXT)
+	cp lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(LIBEXT) .
 	
 patched_link_grammar: patches/$(LINK_GRAMMAR_VERSION)
 	@EXP_MD5=`cat patches/$(LINK_GRAMMAR_VERSION)/*.patch | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
