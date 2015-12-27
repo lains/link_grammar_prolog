@@ -1,0 +1,21 @@
+--- a/include/constituents.h	2005-01-12 18:09:54.000000000 +0100
++++ b/include/constituents.h	2015-12-22 21:59:37.222989970 +0100
+@@ -28,4 +28,7 @@
+ void    linkage_free_constituent_tree(CNode * n);
+ char *  linkage_print_constituent_tree(Linkage linkage, int mode);
+ 
++char * linkage_create_constituent_term(Linkage linkage);
++
++
+ #endif
+--- a/src/constituents.c	2005-01-12 18:09:54.000000000 +0100
++++ b/src/constituents.c	2015-12-22 21:58:55.078780844 +0100
+@@ -1485,3 +1485,8 @@
+     assert(0, "Illegal mode in linkage_print_constituent_tree");
+     return NULL;
+ }
++
++char * linkage_create_constituent_term(Linkage linkage) {
++  return print_flat_constituents(linkage);
++}
++
