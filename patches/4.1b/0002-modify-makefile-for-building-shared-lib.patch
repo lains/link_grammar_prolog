@@ -1,5 +1,5 @@
 --- /dev/null	2015-12-22 19:48:05.045381328 +0100
-+++ b/link-4.1b/Makefile.swi-prolog-lg	2015-12-25 22:18:58.779471755 +0100
++++ b/Makefile.swi-prolog-lg	2015-12-25 22:18:58.779471755 +0100
 @@ -0,0 +1,192 @@
 +# The link parser is a generic C program that compiles with no errors or
 +# warnings on Unixes by DEC, HP, SUN, and Linux.  (It also compiles with
