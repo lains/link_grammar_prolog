@@ -69,7 +69,7 @@
 +$(INC)/string-set.h \
 +$(INC)/tokenize.h \
 +$(INC)/utilities.h \
-+$(INC)/constituents-swi-prolog.h \
++$(INC)/constituents.h \
 +$(INC)/word-file.h \
 +$(INC)/print-util.h
 +
@@ -100,7 +100,7 @@
 +$(OBJ)/extract-links.o \
 +$(OBJ)/count.o \
 +$(OBJ)/build-disjuncts.o \
-+$(OBJ)/constituents-swi-prolog.o \
++$(OBJ)/constituents.o \
 +$(OBJ)/print-util.o
 +
 +${BIN}/lgp.${LIBEXT}: ${OBJECTS}
@@ -109,8 +109,8 @@
 +${OBJ}/lgp.o:   ${SRC}/lgp.c ${INCLUDES}
 +		${CC} ${CFLAGS} -I${INC} -I${SWIHOME}/include ${SRC}/lgp.c -o ${OBJ}/lgp.o
 +
-+${OBJ}/constituents-swi-prolog.o: ${SRC}/constituents-swi-prolog.c ${INCLUDES}
-+		${CC} ${CFLAGS} -I${INC} ${SRC}/constituents-swi-prolog.c -o ${OBJ}/constituents-swi-prolog.o
++${OBJ}/constituents.o: ${SRC}/constituents.c ${INCLUDES}
++		${CC} ${CFLAGS} -I${INC} ${SRC}/constituents.c -o ${OBJ}/constituents.o
 +
 +${OBJ}/prune.o: ${SRC}/prune.c ${INCLUDES}
 +		${CC} ${CFLAGS} -I${INC} ${SRC}/prune.c -o ${OBJ}/prune.o
