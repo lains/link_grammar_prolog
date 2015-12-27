@@ -17,9 +17,9 @@
 +# On at least one system (BSDI 3.0) I had to use gmake instead of make
 +# to get this makefile to work.     -- D. Sleator, June 2000
 +
-+SRC         ?= system-4.1/link-4.1/src
-+INC         ?= system-4.1/link-4.1/include
-+OBJ         ?= system-4.1/link-4.1/obj
++SRC         ?= src
++INC         ?= include
++OBJ         ?= obj
 +SWIHOME     ?= /usr/lib/swi-prolog
 +#Note: probably /cygdrive/c/Program\ Files/SWI-Prolog for cygwin
 +#or C:\Program Files\SWI-Prolog for VC++/lcc
