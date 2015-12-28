@@ -1,0 +1,214 @@
+--- a/src/read-dict.c	2005-01-12 18:09:54.000000000 +0100
++++ b/src/read-dict.c	2015-12-28 08:32:52.871923575 +0100
+@@ -85,7 +80,7 @@
+ 
+ */
+ 
+-int advance(Dictionary dict);
++static int dict_advance(Dictionary dict);
+ 
+ static void dict_error(Dictionary dict, char * s) {
+     int i;
+@@ -95,13 +90,13 @@
+     for (i=0; i<5 && dict->token[0] != '\0' ; i++) {
+ 	sprintf(t, "\"%s\" ", dict->token);
+ 	strcat(tokens, t);
+-	(void) advance(dict);
++	(void) dict_advance(dict);
+     }
+     lperror(DICTPARSE, ". %s\n\t line %d, tokens = %s\n", 
+ 	    s, dict->line_number, tokens);
+ }
+ 
+-void warning(Dictionary dict, char * s) {
++void rd_warning(Dictionary dict, char * s) {
+     printf("\nWarning: %s\n",s);
+     printf("line %d, current token = \"%s\"\n", dict->line_number, dict->token);
+ }
+@@ -137,7 +132,7 @@
+ */
+ #define SPECIAL "(){};[]&|:"
+ 
+-int advance(Dictionary dict) {
++int dict_advance(Dictionary dict) {
+    /* this reads the next token from the input into token */
+     int c, i;
+     int quote_mode;
+@@ -293,7 +288,7 @@
+ 	n->type = CONNECTOR_type;		
+ 	n->cost = 0;
+     }
+-    if (!advance(dict)) {
++    if (!dict_advance(dict)) {
+ 	return NULL;
+     }
+     return n;
+@@ -379,12 +374,12 @@
+     Exp * e;
+ 
+     if (is_equal(dict, '&') || (strcmp(token, "and")==0)) {
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	return operator_exp(dict, AND_type);
+     } else if (is_equal(dict, '|') || (strcmp(dict->token, "or")==0)) {
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	return operator_exp(dict, OR_type);
+@@ -400,7 +395,7 @@
+ 
+     Exp * n;
+     if (is_equal(dict, '(')) {
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	n = in_parens(dict);
+@@ -408,11 +403,11 @@
+ 	    dict_error(dict, "Expecting a \")\".");
+ 	    return NULL;
+ 	}
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+     } else if (is_equal(dict, '{')) {
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	n = in_parens(dict);
+@@ -420,12 +415,12 @@
+ 	    dict_error(dict, "Expecting a \"}\".");
+ 	    return NULL;
+ 	}
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	n = make_optional_node(dict, n);
+     } else if (is_equal(dict, '[')) {
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	n = in_parens(dict);
+@@ -433,7 +428,7 @@
+ 	    dict_error(dict, "Expecting a \"]\".");
+ 	    return NULL;
+ 	}
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	n->cost += 1;
+@@ -469,7 +464,7 @@
+     Exp * nl=NULL, * nr, * n;
+     E_list *ell, *elr;
+     if (is_equal(dict, '(')) {
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	nl = expression(dict);
+@@ -480,11 +475,11 @@
+ 	    dict_error(dict, "Expecting a \")\".");
+ 	    return NULL;
+ 	}
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+     } else if (is_equal(dict, '{')) {
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	nl = expression(dict);
+@@ -495,12 +490,12 @@
+ 	    dict_error(dict, "Expecting a \"}\".");
+ 	    return NULL;
+ 	}
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	nl = make_optional_node(dict, nl);
+     } else if (is_equal(dict, '[')) {
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	nl = expression(dict);
+@@ -511,7 +506,7 @@
+ 	    dict_error(dict, "Expecting a \"]\".");
+ 	    return NULL;
+ 	}
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	nl->cost += 1;
+@@ -530,9 +525,9 @@
+     
+     if (is_equal(dict, '&') || (strcmp(dict->token, "and")==0)) {
+ 	if (!and_ok) {
+-	    warning(dict, "\"and\" and \"or\" at the same level in an expression");
++	    rd_warning(dict, "\"and\" and \"or\" at the same level in an expression");
+ 	}
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	nr = restricted_expression(dict, TRUE,FALSE);
+@@ -550,9 +545,9 @@
+ 	n->cost = 0;
+     } else if (is_equal(dict, '|') || (strcmp(dict->token, "or")==0)) {
+ 	if (!or_ok) {
+-	    warning(dict, "\"and\" and \"or\" at the same level in an expression");
++	    rd_warning(dict, "\"and\" and \"or\" at the same level in an expression");
+ 	}
+-	if (!advance(dict)) {
++	if (!dict_advance(dict)) {
+ 	    return NULL;
+ 	}
+ 	nr = restricted_expression(dict, FALSE,TRUE);
+@@ -687,7 +682,7 @@
+ 
+     Dict_node  *dn_new, *dnx, *dn = NULL;
+ 
+-    for (; !is_equal(dict, ':') ; advance(dict)) {
++    for (; !is_equal(dict, ':') ; dict_advance(dict)) {
+ 	  if (dict->is_special) {
+ 	      dict_error(dict, "I expected a word but didn\'t get it.");
+ 	      return 0;
+@@ -707,7 +702,7 @@
+ 	      dn->string = string_set_add(dict->token, dict->string_set);
+ 	  }
+     }
+-    if (!advance(dict)) {  /* pass the : */
++    if (!dict_advance(dict)) {  /* pass the : */
+ 	return 0;
+     }
+     n = expression(dict);
+@@ -718,7 +713,7 @@
+ 	dict_error(dict, "Expecting \";\" at the end of an entry.");
+ 	return 0;
+     }
+-    if (!advance(dict)) {  /* pass the ; */
++    if (!dict_advance(dict)) {  /* pass the ; */
+ 	return 0;
+     }
+ 
+@@ -771,7 +766,7 @@
+ 
+ int read_dictionary(Dictionary dict) {
+     lperrno = 0;
+-    if (!advance(dict)) {
++    if (!dict_advance(dict)) {
+ 	fclose(dict->fp);
+ 	return 0;
+     }
