@@ -21,7 +21,7 @@
  }
  
 -void warning(Dictionary dict, char * s) {
-+void rd_warning(Dictionary dict, char * s) {
++void dict_warning(Dictionary dict, char * s) {
      printf("\nWarning: %s\n",s);
      printf("line %d, current token = \"%s\"\n", dict->line_number, dict->token);
  }
@@ -157,7 +157,7 @@
      if (is_equal(dict, '&') || (strcmp(dict->token, "and")==0)) {
  	if (!and_ok) {
 -	    warning(dict, "\"and\" and \"or\" at the same level in an expression");
-+	    rd_warning(dict, "\"and\" and \"or\" at the same level in an expression");
++	    dict_warning(dict, "\"and\" and \"or\" at the same level in an expression");
  	}
 -	if (!advance(dict)) {
 +	if (!dict_advance(dict)) {
@@ -169,7 +169,7 @@
      } else if (is_equal(dict, '|') || (strcmp(dict->token, "or")==0)) {
  	if (!or_ok) {
 -	    warning(dict, "\"and\" and \"or\" at the same level in an expression");
-+	    rd_warning(dict, "\"and\" and \"or\" at the same level in an expression");
++	    dict_warning(dict, "\"and\" and \"or\" at the same level in an expression");
  	}
 -	if (!advance(dict)) {
 +	if (!dict_advance(dict)) {
