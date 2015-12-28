@@ -3660,14 +3660,14 @@
 +
 +
 +/**
-+ * @name install()
++ * @name install_lgp()
 + *
 + * @description
 + * This is the initialisation routine for this foreign language library
 + * This function has to be called by load_foreign_library/2 from the Prolog side in order to register the predicates implemented here as C code
 +**/
 +
-+install_t install() {
++install_t install_lgp() {
 +
 +term_t exception; /* Handle for a possible exception */
 +
@@ -3814,14 +3814,14 @@
 +
 +
 +/**
-+ * @name uninstall()
++ * @name uninstall_lgp()
 + *
 + * @description
 + * This is the uninstallation routine for this foreign language library
 + * This function is be called by unload_foreign_library/2 from the Prolog side in order to free the memory used by the DLL
 +**/
 +
-+install_t uninstall() {
++install_t uninstall_lgp() {
 +  pl_delete_all_linkage_sets(); /* These functions have to be called in this precise order to avoid signal 11 exceptions (segmentation fault) */
 +  pl_delete_all_sentences(); /* The linkage set uses the sentence object and must therefore be deleted before */
 +  pl_delete_all_parse_options();
