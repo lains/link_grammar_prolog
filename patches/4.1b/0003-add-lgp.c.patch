@@ -1,12 +1,11 @@
 --- /dev/null	2015-12-22 19:48:05.045381328 +0100
 +++ b/src/lgp.c	2015-12-22 21:44:10.726395705 +0100
-@@ -0,0 +1,3825 @@
+@@ -0,0 +1,3826 @@
 +#include <SWI-Prolog.h>
 +#include <stdlib.h>
 +#include <ctype.h>
-+#include <windows.h>
 +#include "link-includes.h"
-+#include "constituents-swi-prolog.h"
++#include "constituents.h"
 +#include "lgp.h"
 +
 +#define MAXINPUT 1024
@@ -3646,6 +3645,7 @@
 +}
 +
 +
++#if (defined(__MINGW32__) || defined(__MINGW64__) || defined(WIN32) || defined(_WIN32))
 +/**
 + * @name lgp_init_dll(HANDLE h, DWORD reason, void *foo)
 + *
@@ -3656,6 +3656,7 @@
 +int WINAPI lgp_init_dll(HANDLE h, DWORD reason, void *foo) {
 +  return 1;
 +}
++#endif
 +
 +
 +/**
