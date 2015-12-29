@@ -1,56 +1,11 @@
-Link grammar 
-
-Note: steps done to compile the DLL:
-
-1) Install Cygwin (if not already done)
-
-8) Apply an adaptation patch to the /lgp/system-4.0/link-4.0/src/utilities.c files
-This can be done manually (recommended):
-   Find the declaration of the "FILE *dictopen" function
-   Go to the following block of instructions (or similar, if using a release different from 4.0)
-if ((fp = fopen(completename, how)) != NULL) {
-    printf("   Opening %s\n", completename);
-    return fp;
-}
-Add "if (verbosity>0)" before the printf command and replace utilities with the updated c code.
-The other way to patch this file is to do it by a sed command (not recommended):
-$ cd /lgp/system-4.0/link-4.0/src
-$ cat utilities.c | sed -e '/^FILE[[:space:]]*\*[[:space:]]*dictopen/,/^}/{
-s/ printf[[:space:]]*(.*[^@]$/ if (verbosity>0) & \/\/ Added by Lionel Ains. This will make the API be silent when called from SWI-Prolog@/1
-}' > utilities2.c
-The resut is then in "utilities2.c"
-Just rename and overwrite the original utilities.c with the following UNIX command:
-$ mv utilities2.c utilities.c
-This will work if patching the system-4.0 and system-4.1 archives, however, it may not fix further or previous releases.
-
-12) Install SWI-Prolog (if it is not already installed!) and update the /lgp/Makefile to have the corresponding path for SWI in the SWIHOME variable
-
-13) Execute make from the directory where the Makefile is (/lgp or other if the lgp source files have been installed somewhere else)
-
-15) Note: on some systems, make will return "~myuser/pl/include/SWI-Prolog.h: No such file or directory" this maybe either because the character ~ is not allowed (change the SWIHOME variable, within Makefile, with the full path, eg: "/home/usr/myuser/pl/include"
-
-16) Currently, in the version 4.1 of lgp, there is a wrong #endif directive in "structures.h". The gcc compiler may complain about "system-4.1/link-4.1/include/structures.h:477:8: warning: extra tokens at end of #endif directive"
-Simply change the last line of the file:
-#endif _STRUCTURESH_
-by
-#endif // _STRUCTURESH_
-That should keep the compiler quiet
-
-17) If when trying to execute make, a warning of double definition of TRUE and FALSE occurs, the following should fix that:
+Note: if when trying to execute make, a warning of double definition of TRUE and FALSE occurs, the following should fix that:
 In /lgp/system-4.0/link-4.0/include/structures.h, the declarations of TRUE and FALSE have been adapted to be skipped if SWI-Prolog is already included (the same definition would be done twice, otherwise):
 #ifndef _FLI_H_INCLUDED
 #define TRUE  1
 #define FALSE 0
 #endif
 
-22) Finally, by executing "make" on the Cygwin command line, from the "/lgp" directory, the "/lgp/lgp.dll" file should be created, containing the DLL.
-This DLL will be needed inside the SWI-Prolog at run time, to allow the Prolog engine to load the module "lgp_lib.pl"
-
-23) Copy /lgp/lgp.dll to the SWI-Prolog execution directory (typically, SWI-Prolog's home directory)
-
-24) Copy /bin/cygwin1.dll to the same directory (CygWin DLLs need the cygwin1.dll file at runtime).
-
-25) To test the library on SWI-Prolog, try the following commands:
+To test the library on SWI-Prolog, try the following commands:
 ?- ['lgp_lib'].
 
 %  library(shlib) compiled into shlib 0.01 sec, 9,176 bytes
@@ -344,7 +299,7 @@ No
 ?- 
 
 Sanity test package: lib_lgp_test.pl
-To perform basic sanity tests on the lib_lgp.pl library, load lgp_lib_test.pl (which will, in turn, load lgp_lib so it's important to make sure that lgp_lib.pl will be found when needed - which means that the best is to have them stored in the same directory and to cd into this directory before loading lgp_lib_test.pl).
+To perform basic unit tests on the lib_lgp.pl library, load lgp_lib_test.pl (which will, in turn, load lgp_lib so it's important to make sure that lgp_lib.pl will be found when needed - which means that the best is to have them stored in the same directory and to cd into this directory before loading lgp_lib_test.pl).
 When lgp_lib_test has loaded, just run "go." to perform the tests. This should take from a few seconds to several minutes, depending on the speed of your processor and you disk drive (it takes 23s on my Pentium III 600 Mhz).
 Note: the whole package should run without any error at all.
 The worst case is if you get the following exception: lgp_api_error(memory_leak)

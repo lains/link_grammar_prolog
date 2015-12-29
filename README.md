@@ -13,6 +13,8 @@ On Debian or Ubuntu, this can be done by running:
 apt-get install swi-prolog
 ```
 
+On Windows, you will have to install SWI-Prolog for Windows.
+
 Once installed, look for the static library `libpl.a` or `libswipl.a`, on Debian/Ubuntu:
 ```
 dpkg -S libpl.a;dpkg -S libswipl.a
@@ -39,15 +41,24 @@ Checkout a fresh copy if the link grammar binding for SWI-Prolog:
 
 ### Compilation
 
+For Windows, you will have to install:
+* either Cygwin (and always use the cygwin*.dll library altogether with the binding library)
+* or MingWin and compile natively for Windows API
+
 Once `SWILIBPL` and `SWIINC` environment variables are set properly, from the root of the sources, run:
 ```
 make
 ```
 
-This will lead to the creation of the shared library `lgp.so` or `lgp.dll` in the root of the sources.
+This will lead to the creation of the shared library `lgp.so` or `lgp.dll` in the root of the repository.
 This file is the C-library part of the binding (the foreign library in SWI-Prolog terms).
+This shared library will be needed by SWI-Prolog at run time (it is used by the Prolog engine when loading the Prolog binding module "lgp_lib.pl")
 
-You will have to copy this file into the same folder as the `lgp_lib.pl` file provided in the folder `SWI-Prolog_home_dir/` within the source, and start prolog from there.
+You will have to copy this file into a folder where SWI-Prolog will search for shared libraries.
+In case Cygwin is in used, you may also have to copy over the Cygwin library (`cygwin*.dll`)
+The `lgp_lib.pl` file (provided in the folder `SWI-Prolog_home_dir/` within the source) will also probably needs to be moved, or swpil has to be started from this exact folder in order to find `lgp_lib.pl`.
+Typically, this is the SWI-Prolog's home directory.
+
 
 ### Installation of knowledge files
 
