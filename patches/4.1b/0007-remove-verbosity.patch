@@ -1,0 +1,11 @@
+--- a/src/utilities.c	2005-01-12 18:09:54.000000000 +0100
++++ b/src/utilities.c	2015-12-22 21:53:15.713098139 +0100
+@@ -507,7 +507,7 @@
+ 	*(completename+(pos-oldpos)) = '/';
+ 	strcpy(completename+(pos-oldpos)+1,filename);
+ 	if ((fp = fopen(completename, how)) != NULL) {
+-	    printf("   Opening %s\n", completename); 
++	    if (verbosity>0) printf("   Opening %s\n", completename); 
+ 	    return fp;
+ 	}
+ 	oldpos = pos+1;
