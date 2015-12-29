@@ -4,21 +4,6 @@ Note: steps done to compile the DLL:
 
 1) Install Cygwin (if not already done)
 
-2) copy the Makefile from the archived lgp_install/ to the /lgp folder (for example, or any folder accessible to CygWin (note CygWin can access any local drive using /cygdrive/c for C:\ and so on for the next disk drives or partitions)).
-
-3) extract the Link Grammar Parser tar.gz archive from "http://www.link.cs.cmu.edu/link/" (download the parser's source code) into /lgp (the following commands are given for the version 4.0 of the Link Grammar Parser, this needs to be updated accordingly if another version is used)
-
-4) In CygWin, from a UNIX shell, unzip the tar archive by typing ('$' is the shell prompt):
-$ gunzip system-4_0_tar.gz
-
-5) From there, still in the UNIX shell, type:
-$ tar -xf system-4_0_tar
-This will extract the Link Grammar Parser libraries by recreating the tree structure of the source files.
-
-6) Copy the archived lgp_install/src/lgp.c in the /lgp/system-4.0/link-4.0/src/ directory
-
-7) Copy the archived lgp_install/include/lgp.h in the /lgp/system-4.0/link-4.0/include/ directory
-
 8) Apply an adaptation patch to the /lgp/system-4.0/link-4.0/src/utilities.c files
 This can be done manually (recommended):
    Find the declaration of the "FILE *dictopen" function
@@ -38,37 +23,9 @@ Just rename and overwrite the original utilities.c with the following UNIX comma
 $ mv utilities2.c utilities.c
 This will work if patching the system-4.0 and system-4.1 archives, however, it may not fix further or previous releases.
 
-9) Apply a compatibility patch to the constituents.c file:
-$ cd /lgp/system-4.0/link-4.0/src
-$ cat constituents.c | sed -e '/#include.*constituents.h/{
-s/constituents.h/constituents-swi-prolog.h/1
-}' > constituents-swi-prolog.c
-$ echo "
-char * linkage_create_constituent_term(Linkage linkage) {
-  return print_flat_constituents(linkage);
-}
-" >> constituents-swi-prolog.c
-
-10) Adapt constituents.h accordingly:
-$ cd /lgp/system-4.0/link-4.0/include
-$ cat constituents.h | sed -e 's/CONSTITUENTSH/CONSTITUENTSSWIH/g' -e '/^#endif/i\
-char * linkage_create_constituent_term(Linkage linkage);\
-\
-' > constituents-swi-prolog.h
-
-11) To double check that no other reference to constituents.[ch] has to be updated, type the following UNIX commands:
-$ cd /lgp/system-4.0/link-4.0/
-$ find ./ -name '*.[ch]*' -type f 2>/dev/null | xargs grep 'constituents.[ch]'
-This should only show a line like "#include "constituents.c" in ./src/constituents.c
-If not (in system-4.1 version, links-includes.h has also references to constituents.h),
-for each different file, perform the following command (replacing "link-includes" by the name of the source file):
-$ sed -i -e 's/constituents.h/constituents-swi-prolog.h/g' link-includes.h
-
 12) Install SWI-Prolog (if it is not already installed!) and update the /lgp/Makefile to have the corresponding path for SWI in the SWIHOME variable
 
 13) Execute make from the directory where the Makefile is (/lgp or other if the lgp source files have been installed somewhere else)
-
-14) If make returns: "Make: Don't know how to make /lgp/system-4.1/link-4.1/src/lgp.c.  Stop.", it shows that lgp has not been installed in /lgp. It is thus necessary to update the INC, SRC and OBJ section to reflect the directories where lgp has been installed
 
 15) Note: on some systems, make will return "~myuser/pl/include/SWI-Prolog.h: No such file or directory" this maybe either because the character ~ is not allowed (change the SWIHOME variable, within Makefile, with the full path, eg: "/home/usr/myuser/pl/include"
 
@@ -85,38 +42,6 @@ In /lgp/system-4.0/link-4.0/include/structures.h, the declarations of TRUE and F
 #define TRUE  1
 #define FALSE 0
 #endif
-
-18) Then... if getting a problem of
-Cannot export _bss_end__: symbol not defined
-Cannot export _bss_start__: symbol not defined
-Cannot export _data_end__: symbol not defined
-Cannot export _data_start__: symbol not defined
-collect2: ld returned 1 exit status
-make: *** [lgp] Error 1
-While trying the makefile, the "__declspec(dllexport)" options should be prefixed to the function prototypes in lgp.h
-This can also be due to a missing "#include <windows.h>" in lgp.h
-
-19) If, on the contrary, the compiler complains about the __declspec(dllexport) directive ("system-4.1/link-4.1/include/lgp.h:6: parse error before "__declspec""), just add the following section:
-#ifndef WIN32
-#define __declspec(any)
-#endif
-or also:
-#if defined(WIN32)
-#else
-#define __declspec(any)
-#endif
-If this still happens, just remove the #ifndef and #endif line surrounding the #define (in the first version of the directives).
-
-20) If getting something like: "system-4.1/link-4.1/src/lgp.c:2009: parse error before "lgp_init_dll"" complaining about undeclared type in lgp_init_dll, just surround lgp_init_dll and #include <windows.h> by:
-#ifdef WIN32
-and
-#endif
-
-
-21) Update the Makefile to change the 3 paths related to the Link Grammar Parser, indeed that they also contain the version of the Link Grammar Parser installed. The three variables to update are:
-SRC
-INC
-OBJ
 
 22) Finally, by executing "make" on the Cygwin command line, from the "/lgp" directory, the "/lgp/lgp.dll" file should be created, containing the DLL.
 This DLL will be needed inside the SWI-Prolog at run time, to allow the Prolog engine to load the module "lgp_lib.pl"
