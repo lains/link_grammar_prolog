@@ -9,16 +9,21 @@ This project provides a SWI-Prolog binding to the Link Grammar library
 
 First, you will need to install SWI-Prolog in order to use its static library and headers during compilation.
 On Debian or Ubuntu, this can be done by running:
-```apt-get install swi-prolog```
+```
+apt-get install swi-prolog```
 
 Once installed, look for the static library `libpl.a` or `libswipl.a`, on Debian/Ubuntu:
-```dpkg -S libpl.a;dpkg -S libswipl.a```
+```
+dpkg -S libpl.a;dpkg -S libswipl.a```
 Write down *the absolute PATH* to the .a file, and set the environment variable `SWILIBPL` to point to this file, for example:
-```export SWILIBPL=/usr/lib/libswipl.a```
+```
+export SWILIBPL=/usr/lib/libswipl.a```
 Now, look for the header file `SWI-Prolog.h`, on Debian/Ubuntu:
-```dpkg -S SWI-Prolog.h```
+```
+dpkg -S SWI-Prolog.h```
 Write down the *directory* containing the file `SWI-Prolog.h`, and set the environment variable `SWIINC` to point to this file, for example:
-```export SWIINC=/usr/lib/swi-prolog/include```
+```
+export SWIINC=/usr/lib/swi-prolog/include```
 
 Under Windows, setting the variable `SWIHOME` might be enough for the Makefile to automatically guess the value for `SWILIBPL` and `SWIINC`.
 
@@ -30,7 +35,8 @@ Checkout a fresh copy if the link grammar binding for SWI-Prolog:
 ### Compilation
 
 Once `SWILIBPL` and `SWIINC` environment variables are set properly, from the root of the sources, run:
-```make```
+```
+make```
 
 This will lead to the creation of the shared library `lgp.so` or `lgp.dll` in the root of the sources.
 This file is the C-library part of the binding (the foreign library in SWI-Prolog terms).
@@ -51,7 +57,8 @@ You will have to either copy over theses files/directories and their content ins
 ### Running unit tests
 
 Once all database files have been setup, you can run unit tests:
-```swipl <options> -g go,halt -t 'halt(1)'```
+```
+swipl <options> -g go,halt -t 'halt(1)'```
 
 ### Usage
 
