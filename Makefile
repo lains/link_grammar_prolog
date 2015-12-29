@@ -29,8 +29,8 @@ lgp.$(LIBEXT): patched_link_grammar
 	cp lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(LIBEXT) .
 	
 patched_link_grammar: patches/$(LINK_GRAMMAR_VERSION)
-	@EXP_MD5=`cat patches/$(LINK_GRAMMAR_VERSION)/*.patch | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
-	APPLIED_MD5=`cat .applied_patches/*.patch | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
+	@EXP_MD5=`cat patches/$(LINK_GRAMMAR_VERSION)/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
+	APPLIED_MD5=`cat .applied_patches/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
 	if test -n "$$EXP_MD5" && test x"$$EXP_MD5" != x"$$APPLIED_MD5"; then \
 		echo "Resetting patches to be applied to source"; \
 		rm -rf .applied_patches/ 2>/dev/null; \
