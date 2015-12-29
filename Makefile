@@ -27,7 +27,13 @@ all: lgp.$(LIBEXT)
 lgp.$(LIBEXT): patched_link_grammar
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(LIBEXT)
 	cp lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(LIBEXT) .
-	
+
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl: pl/lgp_lib.pl
+	cp $^ $@
+
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: pl/lgp_lib_test.pl
+	cp $^ $@
+
 patched_link_grammar: patches/$(LINK_GRAMMAR_VERSION)
 	@EXP_MD5=`cat patches/$(LINK_GRAMMAR_VERSION)/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
 	APPLIED_MD5=`cat .applied_patches/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
@@ -36,7 +42,7 @@ patched_link_grammar: patches/$(LINK_GRAMMAR_VERSION)
 		rm -rf .applied_patches/ 2>/dev/null; \
 		mkdir .applied_patches/; \
 		cp patches/$(LINK_GRAMMAR_VERSION)/*.patch .applied_patches/; \
-		$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) force_patch; \
+		$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) force_patch  lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl || rm -rf .applied_patches/ 2>/dev/null; \
 	fi
 
 lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz:
