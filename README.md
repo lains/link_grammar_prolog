@@ -64,18 +64,20 @@ Typically, this is the SWI-Prolog's home directory.
 
 The Link grammar library requires several database files and directories in order to run.
 You will find these files/directories wihin the sources (once make has completed successfully) in the directory `lg-source/link*/data`:
+
 * `4.0.dict`
 * `4.0.knowledge`
 * `4.0.constituent-knowledge`
 * `4.0.affix`
 * `words`
+
 You will have to either copy over theses files/directories and their content inside the folder `SWI-Prolog_home_dir/`, or create a symbolic link or provide a valid PATH to this file when running the lgp_lib:create_dictionary/5 command.
 
 ### Running unit tests
 
 Once all database files have been setup, you can run unit tests:
 ```
-swipl <options> -g go,halt -t 'halt(1)'
+swipl -g "['lgp_lib_test'],go,halt" -t 'halt(1)'
 ```
 
 ### Usage
