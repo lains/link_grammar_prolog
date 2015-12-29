@@ -1,3 +1,5 @@
+Link grammar 
+
 Note: steps done to compile the DLL:
 
 1) Install Cygwin (if not already done)
@@ -428,10 +430,8 @@ This will probably show that a bug is hidden somewhere. If you can reproduce, pl
 The only way I could find to create a memory leak so far was to internally add breakpoints in the foreign code and to kill (^C) the execution while the processing is stopped! This should not occur in theory on a run-time version without breakpoints.
 
 /**
- * Please report any bug or problem to lains@gmx.net
- * I will try to update the package for this library
  * So far, this has been tested with the following:
  * CygWin (DLL version) 1.1.3, 1.2.8, 1.3.2 and 1.3.10
  * Link Grammar Parser 4.0 and 4.1
- * SWI-Prolog 3.3.7, 3.3.8, 3.3.9, 3.3.10, 3.4.5 and 5.0.6
+ * SWI-Prolog 3.3.7, 3.3.8, 3.3.9, 3.3.10, 3.4.5, 5.0.6 and 6.6.6
 **/
