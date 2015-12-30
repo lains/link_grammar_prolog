@@ -1,6 +1,6 @@
 --- /dev/null	2015-12-22 19:48:05.045381328 +0100
 +++ b/Makefile.swi-prolog-lg	2015-12-25 22:18:58.779471755 +0100
-@@ -0,0 +1,115 @@
+@@ -0,0 +1,119 @@
 +# The link parser is a generic C program that compiles with no errors or
 +# warnings on Unixes by DEC, HP, SUN, and Linux.  (It also compiles with
 +# no errors under windows 3.1, 95, and NT.  Get the windows distribution
@@ -104,8 +104,12 @@
 +$(OBJ)/constituents.o \
 +$(OBJ)/print-util.o
 +
-+$(BIN)/lgp.$(LIBEXT): $(OBJECTS)
++$(BIN)/lgp.$(LIBEXT): $(OBJECTS) $(SWILIBPL)
 +	$(CC) -shared $(LDFLAGS) -o $@ $(OBJECTS) $(SWILIBPL)
++
++$(SWILIBPL):
++	@echo "SWI-Prolog library not found ($(SWILIBPL)), please set environment variable SWILIBPL to the full path for libpl.a or libswpl.a" >&2
++	@exit 1
 +
 +$(OBJ)/lgp.o: $(SRC)/lgp.c $(INCLUDES)
 +	$(CC) -c $(CFLAGS) -I$(INC) -I$(SWIINC) $(SRC)/lgp.c -o $(OBJ)/lgp.o
