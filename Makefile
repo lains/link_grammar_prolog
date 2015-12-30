@@ -24,7 +24,7 @@ TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
 
 all: lgp.$(LIBEXT)
 
-lgp.$(LIBEXT): patched_link_grammar
+lgp.$(LIBEXT): patched_link_grammar lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(LIBEXT)
 	cp lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(LIBEXT) .
 
@@ -34,7 +34,8 @@ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl: pl/lgp_lib.pl
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: pl/lgp_lib_test.pl
 	cp $^ $@
 
-patched_link_grammar: patches/$(LINK_GRAMMAR_VERSION)
+patched_link_grammar lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog: patches/$(LINK_GRAMMAR_VERSION)
+	@echo "In patched_link_grammar"
 	@EXP_MD5=`cat patches/$(LINK_GRAMMAR_VERSION)/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
 	APPLIED_MD5=`cat .applied_patches/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
 	if test -n "$$EXP_MD5" && test x"$$EXP_MD5" != x"$$APPLIED_MD5"; then \
@@ -46,9 +47,12 @@ patched_link_grammar: patches/$(LINK_GRAMMAR_VERSION)
 	fi
 
 lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz:
-	wget "$(SRC_URL)" -O "lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz"
+	@if ! wget "$(SRC_URL)" -O "lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz"; then \
+		echo "Could not download Link grammar sources from URL: \"$(SRC_URL)\". Please run make again or download this archive manually and save it into a file named lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz" >&2; \
+		exit 1; \
+	fi
 
-lg-source-$(LINK_GRAMMAR_VERSION): lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz
+lg-source-$(LINK_GRAMMAR_VERSION)/: lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz
 	mkdir lg-source-$(LINK_GRAMMAR_VERSION)
 	tar -C lg-source-$(LINK_GRAMMAR_VERSION) -xvzf "lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz" || rm -rf lg-source-$(LINK_GRAMMAR_VERSION)
 
@@ -57,7 +61,7 @@ force_patch: clean-source link_dir
 		patch -d "lg-source/$(LINK_GRAMMAR_BUILD_DIR)" -p1 < "$$p"; \
 	done
 
-link_dir: lg-source-$(LINK_GRAMMAR_VERSION)
+link_dir lg-source/$(LINK_GRAMMAR_BUILD_DIR)/: lg-source-$(LINK_GRAMMAR_VERSION)/
 	rm -f lg-source 2>/dev/null
 	ln -s lg-source-$(LINK_GRAMMAR_VERSION) lg-source
 
