@@ -75,9 +75,9 @@ You will have to either copy over theses files/directories and their content ins
 
 ### Running unit tests
 
-Once all database files have been setup, you can run unit tests:
+From the top directory, you can run unit tests:
 ```
-swipl -g "['lgp_lib_test'],go,halt" -t 'halt(1)'
+make check
 ```
 
 ### Usage
