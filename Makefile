@@ -4,11 +4,11 @@ LINK_GRAMMAR_VERSION?=4.1b
 
 UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.*$$/cygwin/' || echo unknown)
 ifeq ($(UNAME),linux)
-LIBEXT      = so
+SOEXT       = so
 LIBPL       ?= $(SWIHOME)/lib/i386/libpl.a
 else
 ifeq ($(UNAME),cygwin)
-LIBEXT      = dll
+SOEXT       = dll
 LIBPL       ?= $(SWIHOME)/bin/LIBPL.DLL
 else
 $(error Unsupported platform)
@@ -22,11 +22,11 @@ endif
 
 TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
 
-all: lgp.$(LIBEXT)
+all: lgp.$(SOEXT)
 
-lgp.$(LIBEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg
-	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(LIBEXT)
-	cp lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(LIBEXT) .
+lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg
+	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(SOEXT)
+	cp lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT) .
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl: pl/lgp_lib.pl
 	cp $^ $@
@@ -76,5 +76,5 @@ clean: clean-source
 	rm -f lg-source lg-source-archive-$(LINK_GRAMMAR_VERSION).*
 	rm -rf .applied_patches/
 
-check: lgp.$(LIBEXT)
+check: lgp.$(SOEXT)
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg check
