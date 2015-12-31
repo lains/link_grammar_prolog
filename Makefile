@@ -49,7 +49,7 @@ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: pl/lgp_lib_test.pl
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg: lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ .applied_patches/
 	@if ! test -e "$@"; then \
 		for p in .applied_patches/*.patch; do \
-			patch -d "lg-source/$(LINK_GRAMMAR_BUILD_DIR)" -p1 < "$$p"; \
+			patch -d "lg-source/$(LINK_GRAMMAR_BUILD_DIR)" -p1 < "$$p" || exit 1; \
 		done; \
 	fi
 
