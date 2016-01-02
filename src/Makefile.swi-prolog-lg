@@ -119,10 +119,10 @@ $(STATIC_SWILIBPL):
 endif
 
 $(SRC)/lgp.c: lgp.c
-	cp $< $@
+	cmp --quiet $< $@ || cp $< $@
 
 $(INC)/lgp.h: lgp.h
-	cp $< $@
+	cmp --quiet $< $@ || cp $< $@
 
 $(OBJ)/lgp.o: $(SRC)/lgp.c $(INCLUDES)
 	$(CC) -c $(CFLAGS) -I$(INC) -I$(SWIINC) $(SRC)/lgp.c -o $(OBJ)/lgp.o
