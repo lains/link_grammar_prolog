@@ -26,24 +26,26 @@ TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
 
 all: lgp.$(SOEXT)
 
-lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ patched-lg-source
-	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(SOEXT)
-	cp lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT) .
+lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT)
+	cmp --quiet $< $@ || cp $< $@
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl: prolog/lgp_lib.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cp $< $@
+	cmp --quiet $< $@ || cp $< $@
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: prolog/lgp_lib_test.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cp $< $@
+	cmp --quiet $< $@ || cp $< $@
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg: src/Makefile.swi-prolog-lg lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cp $< $@
+	cmp --quiet $< $@ || cp $< $@
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.c: src/lgp.c lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cp $< $@
+	cmp --quiet $< $@ || cp $< $@
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.h: src/lgp.h lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cp $< $@
+	cmp --quiet $< $@ || cp $< $@
+
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ patched-lg-source
+	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(SOEXT)
 
 lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz:
 	@if ! wget "$(SRC_URL)" -O "lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz"; then \
