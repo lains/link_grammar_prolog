@@ -118,6 +118,12 @@ $(STATIC_SWILIBPL):
 	@exit 1
 endif
 
+$(SRC)/lgp.c: lgp.c
+	cp $< $@
+
+$(INC)/lgp.h: lgp.h
+	cp $< $@
+
 $(OBJ)/lgp.o: $(SRC)/lgp.c $(INCLUDES)
 	$(CC) -c $(CFLAGS) -I$(INC) -I$(SWIINC) $(SRC)/lgp.c -o $(OBJ)/lgp.o
 
