@@ -106,12 +106,17 @@ $(OBJ)/print-util.o
 all:
 	$(BIN)/lgp.$(SOEXT)
 
+ifeq ($(STATIC_SWILIB),)
+$(BIN)/lgp.$(SOEXT): $(OBJECTS)
+	swipl-ld -o $(BIN)/lgp.$(SOEXT) $(OBJECTS)
+else
 $(BIN)/lgp.$(SOEXT): $(OBJECTS) $(STATIC_SWILIBPL)
-	$(CC) $(LDSOFLAGS) -o $@ $(OBJECTS) $(STATIC_SWILIBPL)
+       $(CC) $(LDSOFLAGS) -o $@ $(OBJECTS) $(STATIC_SWILIBPL)
 
 $(STATIC_SWILIBPL):
 	@echo "SWI-Prolog library not found ($(STATIC_SWILIBPL)), please set environment variable STATIC_SWILIBPL to the full path for libpl.a or libswpl.a" >&2
 	@exit 1
+endif
 
 $(OBJ)/lgp.o: $(SRC)/lgp.c $(INCLUDES)
 	$(CC) -c $(CFLAGS) -I$(INC) -I$(SWIINC) $(SRC)/lgp.c -o $(OBJ)/lgp.o
