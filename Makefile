@@ -28,10 +28,10 @@ lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ lg-source/$(LINK_GRAMMAR_BUIL
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(SOEXT)
 	cp lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT) .
 
-lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl: pl/lgp_lib.pl
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl: prolog/lgp_lib.pl
 	cp $^ $@
 
-lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: pl/lgp_lib_test.pl
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: prolog/lgp_lib_test.pl
 	cp $^ $@
 
 .applied_patches/: patches/$(LINK_GRAMMAR_VERSION)
