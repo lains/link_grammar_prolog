@@ -48,6 +48,8 @@ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: pl/lgp_lib_test.pl
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg: lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ .applied_patches/
 	@if ! test -e "$@"; then \
+		(cd src && cp -fR * ../lg-source/$(LINK_GRAMMAR_BUILD_DIR)/) || exit 1; \
+		test -e "$@" || exit 1; \
 		for p in .applied_patches/*.patch; do \
 			patch -d "lg-source/$(LINK_GRAMMAR_BUILD_DIR)" -p1 < "$$p" || exit 1; \
 		done; \
@@ -61,7 +63,7 @@ lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz:
 
 lg-source-$(LINK_GRAMMAR_VERSION)/: lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz
 	mkdir lg-source-$(LINK_GRAMMAR_VERSION)
-	tar -C lg-source-$(LINK_GRAMMAR_VERSION) -xvzf "lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz" || rm -rf lg-source-$(LINK_GRAMMAR_VERSION)
+	tar -C lg-source-$(LINK_GRAMMAR_VERSION) -xzf "lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz" || rm -rf lg-source-$(LINK_GRAMMAR_VERSION)
 
 force-patch: clean-source lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg
 
