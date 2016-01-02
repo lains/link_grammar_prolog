@@ -19,9 +19,9 @@ Once installed, look for the static library `libpl.a` or `libswipl.a`, on Debian
 ```
 dpkg -S libpl.a;dpkg -S libswipl.a
 ```
-Write down *the absolute PATH* to the .a file, and set the environment variable `SWILIBPL` to point to this file, for example:
+Write down *the absolute PATH* to the .a file, and set the environment variable `STATIC_SWILIBPL` to point to this file, for example:
 ```
-export SWILIBPL=/usr/lib/libswipl.a
+export STATIC_SWILIBPL=/usr/lib/libswipl.a
 ```
 Now, look for the header file `SWI-Prolog.h`, on Debian/Ubuntu:
 ```
@@ -32,7 +32,7 @@ Write down the *directory* containing the file `SWI-Prolog.h`, and set the envir
 export SWIINC=/usr/lib/swi-prolog/include
 ```
 
-Under Windows, setting the variable `SWIHOME` might be enough for the Makefile to automatically guess the value for `SWILIBPL` and `SWIINC`.
+Under Windows, setting the variable `SWIHOME` might be enough for the Makefile to automatically guess the value for `STATIC_SWILIBPL` and `SWIINC`.
 
 ### Fetching the source code
 
@@ -45,7 +45,7 @@ For Windows, you will have to install:
 * either Cygwin (and always use the cygwin*.dll library altogether with the binding library)
 * or MingWin and compile natively for Windows API
 
-Once `SWILIBPL` and `SWIINC` environment variables are set properly, from the root of the sources, run:
+Once `STATIC_SWILIBPL` and `SWIINC` environment variables are set properly, from the root of the sources, run:
 ```
 make
 ```
