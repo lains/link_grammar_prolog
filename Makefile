@@ -59,7 +59,7 @@ lg-source-$(LINK_GRAMMAR_VERSION)/: lg-source-archive-$(LINK_GRAMMAR_VERSION).ta
 patched-lg-source: lg-source-$(LINK_GRAMMAR_VERSION)/ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ patches/$(LINK_GRAMMAR_VERSION)/
 	@echo "Checking patches"
 	@EXP_MD5=`cat patches/$(LINK_GRAMMAR_VERSION)/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
-	APPLIED_MD5=`cat lg-source-$(LINK_GRAMMAR_VERSION)/.applied_patches/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
+	APPLIED_MD5=`cat lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
 	if test -n "$$EXP_MD5" && test x"$$EXP_MD5" != x"$$APPLIED_MD5"; then \
 		echo "Old sources applied patches differ from current patches, resetting source directory"; \
 		rm -rf lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches || exit 1; \
@@ -75,11 +75,11 @@ patched-lg-source: lg-source-$(LINK_GRAMMAR_VERSION)/ lg-source/$(LINK_GRAMMAR_B
 
 lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches: patches/$(LINK_GRAMMAR_VERSION)/
 	@echo "Copying patch list"
-	mkdir -p lg-source-$(LINK_GRAMMAR_VERSION)/.applied_patches/
-	cp patches/$(LINK_GRAMMAR_VERSION)/*.patch lg-source-$(LINK_GRAMMAR_VERSION)/.applied_patches/
+	mkdir -p lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
+	cp patches/$(LINK_GRAMMAR_VERSION)/*.patch lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
 
 apply-patches: lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches
-	@for p in lg-source-$(LINK_GRAMMAR_VERSION)/.applied_patches/*.patch; do \
+	@for p in lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/*.patch; do \
 		echo "Applying patch \"$$p\""; \
 		patch -d "lg-source/$(LINK_GRAMMAR_BUILD_DIR)" -p1 < "$$p" || exit 1; \
 	done;
