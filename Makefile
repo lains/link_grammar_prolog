@@ -20,6 +20,8 @@ SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/li
 LINK_GRAMMAR_BUILD_DIR?=link-4.1b
 endif
 
+LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
+
 TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
 
 all: lgp.$(SOEXT)
@@ -59,10 +61,10 @@ lg-source-$(LINK_GRAMMAR_VERSION)/: lg-source-archive-$(LINK_GRAMMAR_VERSION).ta
 patched-lg-source: lg-source-$(LINK_GRAMMAR_VERSION)/ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ patches/$(LINK_GRAMMAR_VERSION)/
 	@echo "Checking patches"
 	@EXP_MD5=`cat patches/$(LINK_GRAMMAR_VERSION)/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
-	APPLIED_MD5=`cat lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
+	APPLIED_MD5=`cat $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
 	if test -n "$$EXP_MD5" && test x"$$EXP_MD5" != x"$$APPLIED_MD5"; then \
 		echo "Old sources applied patches differ from current patches, resetting source directory"; \
-		rm -rf lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches || exit 1; \
+		rm -rf $(LINK_GRAMMAR_APPLIED_PATCHES_DIR) || exit 1; \
 		$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) clean-source || exit 1; \
 	fi
 	$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg \
@@ -71,25 +73,25 @@ patched-lg-source: lg-source-$(LINK_GRAMMAR_VERSION)/ lg-source/$(LINK_GRAMMAR_B
 	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl \
 	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl
 	$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) patch
-	$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches
+	$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)
 
-lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches: patches/$(LINK_GRAMMAR_VERSION)/
+$(LINK_GRAMMAR_APPLIED_PATCHES_DIR): patches/$(LINK_GRAMMAR_VERSION)/
 	@echo "Copying patch list"
-	mkdir -p lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
-	cp patches/$(LINK_GRAMMAR_VERSION)/*.patch lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
+	mkdir -p $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)
+	cp patches/$(LINK_GRAMMAR_VERSION)/*.patch $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)
 
-apply-patches: lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches
-	@for p in lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/*.patch; do \
+apply-patches: $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)
+	@for p in $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)/*.patch; do \
 		echo "Applying patch \"$$p\""; \
 		patch -d "lg-source/$(LINK_GRAMMAR_BUILD_DIR)" -p1 < "$$p" || exit 1; \
 	done;
 
 patch:
-	if ! test -e lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches; then \
+	@if ! test -e $(LINK_GRAMMAR_APPLIED_PATCHES_DIR); then \
 		echo "Applying all patches for version $(LINK_GRAMMAR_VERSION)"; \
 		$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) apply-patches; \
 	else \
-		echo "Skipping patching (already applied)" >&2; \
+		echo "Skipping patching (already applied)"; \
 	fi
 
 force-patch: clean-source patched-lg-source
