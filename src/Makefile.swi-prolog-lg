@@ -108,7 +108,7 @@ all:
 
 ifeq ($(STATIC_SWILIB),)
 $(BIN)/lgp.$(SOEXT): $(OBJECTS)
-	swipl-ld -o $(BIN)/lgp.$(SOEXT) $(OBJECTS)
+	swipl-ld -shared -o $(BIN)/lgp.$(SOEXT) $(OBJECTS)
 else
 $(BIN)/lgp.$(SOEXT): $(OBJECTS) $(STATIC_SWILIBPL)
        $(CC) $(LDSOFLAGS) -o $@ $(OBJECTS) $(STATIC_SWILIBPL)
