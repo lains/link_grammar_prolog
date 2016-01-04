@@ -27,22 +27,40 @@ TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
 all: lgp.$(SOEXT)
 
 lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT)
-	cmp --quiet $< $@ || cp $< $@
+	@if ! cmp --quiet $< $@; then \
+		echo cp $< $@; \
+		cp $< $@; \
+	fi
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl: prolog/lgp_lib.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cmp --quiet $< $@ || cp $< $@
+	@if ! cmp --quiet $< $@; then \
+		echo cp $< $@; \
+		cp $< $@; \
+	fi
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: prolog/lgp_lib_test.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cmp --quiet $< $@ || cp $< $@
+	@if ! cmp --quiet $< $@; then \
+		echo cp $< $@; \
+		cp $< $@; \
+	fi
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg: src/Makefile.swi-prolog-lg lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cmp --quiet $< $@ || cp $< $@
+	@if ! cmp --quiet $< $@; then \
+		echo cp $< $@; \
+		cp $< $@; \
+	fi
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.c: src/lgp.c lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cmp --quiet $< $@ || cp $< $@
+	@if ! cmp --quiet $< $@; then \
+		echo cp $< $@; \
+		cp $< $@; \
+	fi
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.h: src/lgp.h lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
-	cmp --quiet $< $@ || cp $< $@
+	@if ! cmp --quiet $< $@; then \
+		echo cp $< $@; \
+		cp $< $@; \
+	fi
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ patched-lg-source
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg lgp.$(SOEXT)
@@ -61,7 +79,7 @@ lg-source-$(LINK_GRAMMAR_VERSION)/: lg-source-archive-$(LINK_GRAMMAR_VERSION).ta
 	fi
 
 patched-lg-source: lg-source-$(LINK_GRAMMAR_VERSION)/ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/ patches/$(LINK_GRAMMAR_VERSION)/
-	@echo "Checking patches"
+	@echo "Checking files to copy and patches to apply"
 	@EXP_MD5=`cat patches/$(LINK_GRAMMAR_VERSION)/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
 	APPLIED_MD5=`cat $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)/*.patch 2>/dev/null | md5sum - | sed -e 's/^\([^[:blank:]][^[:blank:]]*\).*$$/\1/'`; \
 	if test -n "$$EXP_MD5" && test x"$$EXP_MD5" != x"$$APPLIED_MD5"; then \
