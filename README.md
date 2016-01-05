@@ -15,6 +15,29 @@ apt-get install swi-prolog
 
 On Windows, you will have to install SWI-Prolog for Windows.
 
+### Fetching the source code
+
+Checkout a fresh copy if the link grammar binding for SWI-Prolog:
+```git clone https://github.com/lains/swi-prolog-lg.git```
+
+### Compilation
+
+For Windows, you will have to install:
+* either Cygwin (and always use the cygwin*.dll library altogether with the binding library)
+* or MingWin and compile natively for Windows API
+
+The easiest way is to run SWI-Prolog's built-in packager, from the root of the sources:
+```
+swipl -g "pack_install('.'),halt" -t 'halt(1)'
+```
+
+If the compilation succeeds, the library should be installed. You can check this from the Prolog prompt:
+```
+?- pack_list_installed.
+```
+
+### Alternative compilation using static linking to the libpl.a library
+
 Once installed, look for the static library `libpl.a` or `libswipl.a`, on Debian/Ubuntu:
 ```
 dpkg -S libpl.a;dpkg -S libswipl.a
@@ -34,17 +57,6 @@ export SWIINC=/usr/lib/swi-prolog/include
 
 Under Windows, setting the variable `SWIHOME` might be enough for the Makefile to automatically guess the value for `STATIC_SWILIBPL` and `SWIINC`.
 
-### Fetching the source code
-
-Checkout a fresh copy if the link grammar binding for SWI-Prolog:
-```git clone https://github.com/lains/swi-prolog-lg.git```
-
-### Compilation
-
-For Windows, you will have to install:
-* either Cygwin (and always use the cygwin*.dll library altogether with the binding library)
-* or MingWin and compile natively for Windows API
-
 Once `STATIC_SWILIBPL` and `SWIINC` environment variables are set properly, from the root of the sources, run:
 ```
 make
@@ -59,7 +71,6 @@ In case Cygwin is in used, you may also have to copy over the Cygwin library (`c
 The `lgp_lib.pl` file (provided in the folder `SWI-Prolog_home_dir/` within the source) will also probably needs to be moved, or swpil has to be started from this exact folder in order to find `lgp_lib.pl`.
 Typically, this is the SWI-Prolog's home directory.
 
-
 ### Installation of knowledge files
 
 The Link grammar library requires several database files and directories in order to run.
@@ -71,7 +82,7 @@ You will find these files/directories wihin the sources (once make has completed
 * `4.0.affix`
 * `words`
 
-You will have to either copy over theses files/directories and their content inside the folder `SWI-Prolog_home_dir/`, or create a symbolic link or provide a valid PATH to this file when running the lgp_lib:create_dictionary/5 command.
+You will have to either copy over theses files/directories and their content inside the current directory at the moment the lgp_lib:create_dictionary/5 predicate is callde, or create a symbolic link or provide valid PATHs (relative/absolute) to these files when running the lgp_lib:create_dictionary/5 predicate.
 
 ### Running unit tests
 
