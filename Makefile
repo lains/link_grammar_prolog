@@ -5,11 +5,9 @@ LINK_GRAMMAR_VERSION?=4.1b
 UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.*$$/cygwin/' || echo unknown)
 ifeq ($(UNAME),linux)
 SOEXT       = so
-LIBPL       ?= $(SWIHOME)/lib/i386/libpl.a
 else
 ifeq ($(UNAME),cygwin)
 SOEXT       = dll
-LIBPL       ?= $(SWIHOME)/bin/LIBPL.DLL
 else
 $(error Unsupported platform)
 endif
@@ -23,6 +21,12 @@ endif
 LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
 
 TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
+
+ifeq ($(PACKSODIR))
+LIB_TARGET_DIR?=$(PACKSODIR)
+else
+LIB_TARGET_DIR=./lib
+endif
 
 all: lgp.$(SOEXT)
 
@@ -130,10 +134,7 @@ check: lgp.$(SOEXT)
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg check
 
 install:
-	@echo Now running make install
-	@echo SWIARCH=\"$(SWIARCH)\"
-	@echo PACKSODIR=\"$(PACKSODIR)\"
-	@echo SWISOLIB=\"$(SWISOLIB)\"
-	@echo CFLAGS=\"$(CFLAGS)\"
-	@echo LDSOFLAGS=\"$(LDSOFLAGS)\"
-	@echo SOEXT=\"$(SOEXT)\"
+	install -d $(LIB_TARGET_DIR)/
+	install lgp.$(SOEXT) $(LIB_TARGET_DIR)/
+
+.PHONY: all patched-lg-source apply-patches patch force-patch clean-source clean check install
