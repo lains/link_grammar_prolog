@@ -22,10 +22,10 @@ LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patc
 
 TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
 
-ifeq ($(PACKSODIR))
-LIB_TARGET_DIR?=$(PACKSODIR)
-else
+ifeq ($(PACKSODIR),)
 LIB_TARGET_DIR=./lib
+else
+LIB_TARGET_DIR?=$(PACKSODIR)
 endif
 
 all: lgp.$(SOEXT)
