@@ -72,7 +72,7 @@ lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz:
 	fi
 
 lg-source-$(LINK_GRAMMAR_VERSION)/: lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz
-	mkdir lg-source-$(LINK_GRAMMAR_VERSION)
+	mkdir -p lg-source-$(LINK_GRAMMAR_VERSION)
 	@if ! tar -C lg-source-$(LINK_GRAMMAR_VERSION) -xzf "lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz"; then \
 		rm -rf lg-source-$(LINK_GRAMMAR_VERSION); \
 		echo "Could not extract \"lg-source-archive-$(LINK_GRAMMAR_VERSION).tar.gz\" into \"lg-source-$(LINK_GRAMMAR_VERSION)\"" >&2; \
@@ -117,7 +117,7 @@ patch:
 force-patch: clean-source patched-lg-source
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/: lg-source-$(LINK_GRAMMAR_VERSION)/
-	rm -f lg-source 2>/dev/null
+	rm -rf lg-source || :
 	ln -s lg-source-$(LINK_GRAMMAR_VERSION) lg-source
 
 clean-source:
@@ -128,3 +128,12 @@ clean: clean-source
 
 check: lgp.$(SOEXT)
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg check
+
+install:
+	@echo Now running make install
+	@echo SWIARCH=\"$(SWIARCH)\"
+	@echo PACKSODIR=\"$(PACKSODIR)\"
+	@echo SWISOLIB=\"$(SWISOLIB)\"
+	@echo CFLAGS=\"$(CFLAGS)\"
+	@echo LDSOFLAGS=\"$(LDSOFLAGS)\"
+	@echo SOEXT=\"$(SOEXT)\"
