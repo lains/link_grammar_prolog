@@ -35,6 +35,32 @@ If the compilation succeeds, the library should be installed. You can check this
 ```
 ?- pack_list_installed.
 ```
+This should return (among other possible packages), the link-grammar-binding package.
+
+### Installation of knowledge files
+
+The Link grammar library requires several database files and directories in order to run.
+You will find these files/directories wihin the sources (once make has completed successfully) in the directory `lg-source/link*/data`, but more conveniently, they are also copied in the `data/` folder during the `make install` stage.
+
+* `4.0.dict`
+* `4.0.knowledge`
+* `4.0.constituent-knowledge`
+* `4.0.affix`
+* `words`
+
+You will have to either copy over theses files/directories and their content inside the current directory at the moment the lgp_lib:create_dictionary/5 predicate is callde, or create a symbolic link or provide valid PATHs (relative/absolute) to these files when running the lgp_lib:create_dictionary/5 predicate.
+
+#### Using the library
+
+In order to load the library, just do:
+```
+?- use_module(library(lgp)).
+```
+
+In order to load the provided data (dictonary, rules, knownledge etc...), you can run the following line, *from a directory that contains the database files* or you will have to us absolute/relative path to these files:
+```
+?- lgp_lib:create_dictionary('4.0.dict', '4.0.knowledge', '4.0.constituent-knowledge', '4.0.affix', Dictionary_handle).
+```
 
 ### Alternative compilation using static linking to the libpl.a library
 
@@ -70,19 +96,6 @@ You will have to copy this file into a folder where SWI-Prolog will search for s
 In case Cygwin is in used, you may also have to copy over the Cygwin library (`cygwin*.dll`)
 The `lgp_lib.pl` file (provided in the folder `SWI-Prolog_home_dir/` within the source) will also probably needs to be moved, or swpil has to be started from this exact folder in order to find `lgp_lib.pl`.
 Typically, this is the SWI-Prolog's home directory.
-
-### Installation of knowledge files
-
-The Link grammar library requires several database files and directories in order to run.
-You will find these files/directories wihin the sources (once make has completed successfully) in the directory `lg-source/link*/data`:
-
-* `4.0.dict`
-* `4.0.knowledge`
-* `4.0.constituent-knowledge`
-* `4.0.affix`
-* `words`
-
-You will have to either copy over theses files/directories and their content inside the current directory at the moment the lgp_lib:create_dictionary/5 predicate is callde, or create a symbolic link or provide valid PATHs (relative/absolute) to these files when running the lgp_lib:create_dictionary/5 predicate.
 
 ### Running unit tests
 
