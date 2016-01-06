@@ -130,7 +130,7 @@ $(OBJ)/lgp.o: $(SRC)/lgp.c $(INCLUDES)
 $(OBJ)/%.o: $(SRC)/%.c $(INCLUDES)
 	$(CC) -c $(CFLAGS) -I$(INC) -o $@ $<
 
-check: $(BIN)/lgp.$(SOEXT) ./lgp_lib.pl ./lgp_lib_test.pl
+check: $(BIN)/lgp.$(SOEXT) ./lgp.pl ./lgp_lib_test.pl
 	swipl -g "['lgp_lib_test'],go,halt" -t 'halt(1)'
 
 clean:

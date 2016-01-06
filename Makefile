@@ -36,13 +36,13 @@ lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT)
 		cp $< $@; \
 	fi
 
-lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl: prolog/lgp_lib.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.pl: prolog/lgp.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
 	@if ! cmp --quiet $< $@; then \
 		echo cp $< $@; \
 		cp $< $@; \
 	fi
 
-lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: prolog/lgp_lib_test.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: tests/lgp_lib_test.pl lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
 	@if ! cmp --quiet $< $@; then \
 		echo cp $< $@; \
 		cp $< $@; \
@@ -94,7 +94,7 @@ patched-lg-source: lg-source-$(LINK_GRAMMAR_VERSION)/ lg-source/$(LINK_GRAMMAR_B
 	$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg \
 	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.c \
 	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.h \
-	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib.pl \
+	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.pl \
 	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl
 	$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) patch
 	$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)

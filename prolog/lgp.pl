@@ -1,5 +1,5 @@
 /**
- * @modulename lgp_lib.pl
+ * @modulename lgp.pl
  *
  * Exported predicates:
  * @export
@@ -39,7 +39,7 @@
  * get_linkage/2 : this is the foreign predicate making the link with the Link Grammar Parser's API
 **/
 
-:- module(lgp_lib,
+:- module(lgp,
 	  [
 	   create_dictionary/5,
 	   delete_dictionary/1,
