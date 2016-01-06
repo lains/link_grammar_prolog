@@ -16,6 +16,7 @@ endif
 ifeq ($(LINK_GRAMMAR_VERSION),4.1b)
 SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b.tar.gz
 LINK_GRAMMAR_BUILD_DIR?=link-4.1b
+LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
 
 LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
@@ -136,5 +137,7 @@ check: lgp.$(SOEXT)
 install:
 	install -d $(LIB_TARGET_DIR)/
 	install lgp.$(SOEXT) $(LIB_TARGET_DIR)/
+	install -d data
+	(DST=`pwd`/data/ && cd lg-source/$(LINK_GRAMMAR_DATA_DIR); cp -r * "$$DST")
 
 .PHONY: all patched-lg-source apply-patches patch force-patch clean-source clean check install
