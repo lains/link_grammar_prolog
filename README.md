@@ -50,7 +50,7 @@ You will find these files/directories wihin the sources (once make has completed
 
 You will have to either copy over theses files/directories and their content inside the current directory at the moment the lgp_lib:create_dictionary/5 predicate is callde, or create a symbolic link or provide valid PATHs (relative/absolute) to these files when running the lgp_lib:create_dictionary/5 predicate.
 
-#### Using the library
+### Using the library
 
 In order to load the library, just do:
 ```
@@ -59,8 +59,11 @@ In order to load the library, just do:
 
 In order to load the provided data (dictonary, rules, knownledge etc...), you can run the following line, *from a directory that contains the database files* or you will have to us absolute/relative path to these files:
 ```
-?- lgp_lib:create_dictionary('4.0.dict', '4.0.knowledge', '4.0.constituent-knowledge', '4.0.affix', Dictionary_handle).
+?- lgp:create_dictionary('4.0.dict', '4.0.knowledge', '4.0.constituent-knowledge', '4.0.affix', Dictionary_handle).
 ```
+
+For detailed instructions, on how to use the current Link Grammar (v4.1b) please refer to
+[the documentation embedded inside the sources](patches/4.1b//README.txt)
 
 ### Alternative compilation using static linking to the libpl.a library
 

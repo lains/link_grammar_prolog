@@ -1,17 +1,13 @@
-Note: if when trying to execute make, a warning of double definition of TRUE and FALSE occurs, the following should fix that:
-In /lgp/system-4.0/link-4.0/include/structures.h, the declarations of TRUE and FALSE have been adapted to be skipped if SWI-Prolog is already included (the same definition would be done twice, otherwise):
-#ifndef _FLI_H_INCLUDED
-#define TRUE  1
-#define FALSE 0
-#endif
+These instructions show examples on how to use the Link Grammar from SWI-Prolog.
 
-To test the library on SWI-Prolog, try the following commands:
-?- ['lgp_lib'].
+First, load the library.
+Open the SWI-Prolog interprete and run the following commands:
+?- use_module(library(lgp)).
 
 %  library(shlib) compiled into shlib 0.01 sec, 9,176 bytes
 % c:/program files/swi-prolog/lgp_lib.pl compiled into lgp_lib 0.01 sec, 28,172 bytes
 
-?- lgp_lib:create_dictionary('4.0.dict', '4.0.knowledge', '4.0.constituent-knowledge', '4.0.affix', Dictionary_handle).
+?- lgp:create_dictionary('4.0.dict', '4.0.knowledge', '4.0.constituent-knowledge', '4.0.affix', Dictionary_handle).
 
 Dictionary_handle = '$dictionary'(0)
 
@@ -20,35 +16,35 @@ Yes
 % If SWI-Prolog is killed during this command, check that the content of words/ is matching with the LGP source files used to build lgp.dll (even if the version appears to be the same, it is always better to reextract the content of words/ when extracting the system-?.?.tar.gz archive
 
 
-?- lgp_lib:create_parse_options([disjunct_cost=2, min_null_count=0, max_null_count=0, linkage_limit=100, max_parse_time=10, max_memory=128000000], PO_handle).
+?- lgp:create_parse_options([disjunct_cost=2, min_null_count=0, max_null_count=0, linkage_limit=100, max_parse_time=10, max_memory=128000000], PO_handle).
 
 PO_handle = '$options'(0) 
 
 Yes
-?- lgp_lib:create_parse_options([disjunct_cost=3, min_null_count=1, max_null_count=250, linkage_limit=100, max_parse_time=10, max_memory=128000000], Panic_PO_handle).
+?- lgp:create_parse_options([disjunct_cost=3, min_null_count=1, max_null_count=250, linkage_limit=100, max_parse_time=10, max_memory=128000000], Panic_PO_handle).
 
 Panic_PO_handle = '$options'(1) 
 
 Yes
-?- lgp_lib:enable_panic_on_parse_options($Panic_PO_handle).
+?- lgp:enable_panic_on_parse_options($Panic_PO_handle).
 
 Yes
-?- lgp_lib:create_sentence('This is the first recorded sentence', $Dictionary_handle, Sentence_0).
+?- lgp:create_sentence('This is the first recorded sentence', $Dictionary_handle, Sentence_0).
 
 Sentence_0 = '$sentence'(0) 
 
 Yes
-?- lgp_lib:create_linkage_set($Sentence_0, $PO_handle, Linkage_set_handle_0).
+?- lgp:create_linkage_set($Sentence_0, $PO_handle, Linkage_set_handle_0).
 
 Linkage_set_handle_0 = '$linkageset'(0) 
 
 Yes
-?- lgp_lib:create_sentence('The software is now fully installed', $Dictionary_handle, Sentence_1).
+?- lgp:create_sentence('The software is now fully installed', $Dictionary_handle, Sentence_1).
 
 Sentence_1 = '$sentence'(1) 
 
 Yes
-?- lgp_lib:create_linkage_set($Sentence_1, $PO_handle, Linkage_set_handle_1).
+?- lgp:create_linkage_set($Sentence_1, $PO_handle, Linkage_set_handle_1).
 
 Linkage_set_handle_1 = '$linkageset'(1) 
 
@@ -80,7 +76,7 @@ Yes
 HS = ['$sentence'(1), '$sentence'(0)] 
 
 Yes
-?- lgp_lib:get_linkage($Linkage_set_handle_1, Linkage).
+?- lgp:get_linkage($Linkage_set_handle_1, Linkage).
 Linkage = [link([m], connection(e-[m], fully(_G608), installed(v))), link([m], connection(e-[], now(e), installed(v))), link([m], connection(p-[v], is(v), installed(v))), link([m], connection(s-[s], software(n), is(v))), link([m], connection(d-[m|...], the(_G516), software(n))), link([m], connection(w-[...], 'left-wall'(_G493), software(n))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))] ;
 
 No
@@ -110,7 +106,7 @@ One_link = link([], connection(rw-[], 'left-wall'(_G487), 'right-wall'(_G489))) 
 
 No
 % We now go back the the sentence 0, recorded in linkage set 0, and fail get_linkage to see the 3 different linkages in the linkage set
-?- lgp_lib:get_linkage($Linkage_set_handle_0, Linkage).
+?- lgp:get_linkage($Linkage_set_handle_0, Linkage).
 
 Linkage = [link([m], connection(e-[], first(a), recorded(v))), link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(d-[s], the(_G622), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G543), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))] ;
 
@@ -138,7 +134,7 @@ One_link = link([], connection(rw-[], 'left-wall'(_G498), 'right-wall'(_G500))) 
 
 No
 % The real power of the combination of the Prolog engine and the Link Grammar Parser is the ability to look for a specific link in the sentence. Prolog will thus find the linkage that matches the pattern searched for, within the whole linkage set:
-?- lgp_lib:get_linkage($Linkage_set_handle_0, Linkage), member(One_link, Linkage), One_link=link([_], connection(Link_type-Link_subtype_list, is(Type_a), Word_b)).
+?- lgp:get_linkage($Linkage_set_handle_0, Linkage), member(One_link, Linkage), One_link=link([_], connection(Link_type-Link_subtype_list, is(Type_a), Word_b)).
 
 Linkage = [link([m], connection(e-[], first(a), recorded(v))), link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(d-[s], the(_G1426), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1347), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
 One_link = link([m], connection(o-[s, t], is(v), sentence(n)))
@@ -164,7 +160,7 @@ Word_b = sentence(n) ;
 No
 % The expression above looks for all different links concerning is, and returns the linkage (Linkage), the link (One_link), the type of the link (Link_type) and its subtype if any (Link_subtype_list), as well as the type found for the word 'is' (Type_a) and the word link to 'is' (in Word_b)
 % We can also look for all objects linked with the:
-?- lgp_lib:get_linkage($Linkage_set_handle_0, Linkage), member(One_link, Linkage), One_link=link([_], connection(_-_, the(_Type_a), Word_b)).
+?- lgp:get_linkage($Linkage_set_handle_0, Linkage), member(One_link, Linkage), One_link=link([_], connection(_-_, the(_Type_a), Word_b)).
 
 Linkage = [link([m], connection(e-[], first(a), recorded(v))), link([m], connection(a-[], recorded(v), sentence(n))), link([m], connection(d-[s], the(_G982), sentence(n))), link([m], connection(o-[s, t], is(v), sentence(n))), link([m], connection(s-[s|...], this(p), is(v))), link([m], connection(w-[...], 'left-wall'(_G1185), this(p))), link([], connection(... -..., 'left-wall'(...), 'right-wall'(...)))]
 One_link = link([m], connection(d-[s], the(_G982), sentence(n)))
@@ -285,7 +281,7 @@ Yes
 ?- current_foreign_library(Lib, Predicates).
 
 Lib = lgp
-Predicates = [lgp_lib:create_dictionary(_G454, _G455, _G456, _G457, _G458), lgp_lib:delete_dictionary(_G466), lgp_lib:delete_all_dictionaries, lgp_lib:get_nb_dictionaries(_G480), lgp_lib:get_handles_dictionaries(_G488), lgp_lib:create_parse_options_(_G496), lgp_lib:delete_parse_options(_G504), lgp_lib:delete_all_parse_options, ... :...|...] 
+Predicates = [lgp:create_dictionary(_G454, _G455, _G456, _G457, _G458), lgp:delete_dictionary(_G466), lgp:delete_all_dictionaries, lgp:get_nb_dictionaries(_G480), lgp:get_handles_dictionaries(_G488), lgp:create_parse_options_(_G496), lgp:delete_parse_options(_G504), lgp:delete_all_parse_options, ... :...|...]
 
 Yes
 % Let's unload the lgp_lib from the memory (this will deallocate the whole space taken by the DLL)
@@ -297,21 +293,3 @@ Yes
 
 No
 ?- 
-
-Sanity test package: lib_lgp_test.pl
-To perform basic unit tests on the lib_lgp.pl library, load lgp_lib_test.pl (which will, in turn, load lgp_lib so it's important to make sure that lgp_lib.pl will be found when needed - which means that the best is to have them stored in the same directory and to cd into this directory before loading lgp_lib_test.pl).
-When lgp_lib_test has loaded, just run "go." to perform the tests. This should take from a few seconds to several minutes, depending on the speed of your processor and you disk drive (it takes 23s on my Pentium III 600 Mhz).
-Note: the whole package should run without any error at all.
-The worst case is if you get the following exception: lgp_api_error(memory_leak)
-This exception should then come out all the time if you try to re-run the sanity tests by typing 'go.' one more time. You'll see the tests failing at the very beginning with an error message:
-*** Exception 'lgp_api_error(memory_leak)' raised in family Cleanup
-
-This will probably show that a bug is hidden somewhere. If you can reproduce, please let me know and I will try to fix it when I have some spare time.
-The only way I could find to create a memory leak so far was to internally add breakpoints in the foreign code and to kill (^C) the execution while the processing is stopped! This should not occur in theory on a run-time version without breakpoints.
-
-/**
- * So far, this has been tested with the following:
- * CygWin (DLL version) 1.1.3, 1.2.8, 1.3.2 and 1.3.10
- * Link Grammar Parser 4.0 and 4.1
- * SWI-Prolog 3.3.7, 3.3.8, 3.3.9, 3.3.10, 3.4.5, 5.0.6 and 6.6.6
-**/
