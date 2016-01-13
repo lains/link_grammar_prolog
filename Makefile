@@ -18,6 +18,11 @@ SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/li
 LINK_GRAMMAR_BUILD_DIR?=link-4.1b
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
+ifeq ($(LINK_GRAMMAR_VERSION),5.3.2)
+SRC_URL?=https://github.com/opencog/link-grammar/link-grammar-5.3.2.tar.gz
+LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-5.3.2
+LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
+endif
 
 LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
 
@@ -49,7 +54,7 @@ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp_lib_test.pl: tests/lgp_lib_test.pl lg-so
 		cp $< $@; \
 	fi
 
-lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg: src/Makefile.swi-prolog-lg lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg: src/Makefile.swi-prolog-lg-$(LINK_GRAMMAR_VERSION) lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
 	@if ! cmp --quiet $< $@; then \
 		echo cp $< $@; \
 		cp $< $@; \
@@ -103,7 +108,7 @@ patched-lg-source: lg-source-$(LINK_GRAMMAR_VERSION)/ lg-source/$(LINK_GRAMMAR_B
 $(LINK_GRAMMAR_APPLIED_PATCHES_DIR): patches/$(LINK_GRAMMAR_VERSION)/
 	@echo "Copying patch list"
 	mkdir -p $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)
-	cp patches/$(LINK_GRAMMAR_VERSION)/*.patch $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)
+	cp patches/$(LINK_GRAMMAR_VERSION)/*.patch $(LINK_GRAMMAR_APPLIED_PATCHES_DIR) || :
 
 apply-patches: $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)
 	@for p in $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)/*.patch; do \
