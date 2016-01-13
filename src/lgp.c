@@ -1157,21 +1157,26 @@ term_t index_in_term;
  * Note: this function is thread-safe
 **/
 
-foreign_t get_index_from_handle(functor_t base_functor, term_t handle_in, int *ref_index_out) {
+foreign_t get_index_from_handle(functor_t base_functor, term_t handle_in, unsigned int *ref_index_out) {
 
 term_t index_out_term;
+int result;
 
   
   if (PL_is_functor(handle_in, base_functor)) { /* Check if handle follows the base_functor(...) template */
     index_out_term = PL_new_term_ref(); /* Create a term to contain the integer */
     if (!PL_get_arg(1, handle_in, index_out_term))
       PL_fail; /* Error, the handle doesn't follow the right template */
-    if (!PL_get_integer(index_out_term, ref_index_out))
+    if (!PL_get_integer(index_out_term, &result))
       PL_fail; /* Error, the parameter for the handle is not an integer! */
   }
   else {
     PL_fail; /* Error, the handle is invalid because it is not a '$functor'/1 -type based compound */
   }
+  if (result<0) {
+    PL_fail; /* Error, the handle is invalid because it uses a signed and negative integer */
+  }
+  *ref_index_out = (unsigned int)result;
   PL_succeed; /* Successfully executed. Return the int of the handle inside *ref_index_out */
 }
 
