@@ -19,7 +19,7 @@ LINK_GRAMMAR_BUILD_DIR?=link-4.1b
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
 ifeq ($(LINK_GRAMMAR_VERSION),5.3.2)
-SRC_URL?=https://github.com/opencog/link-grammar/link-grammar-5.3.2.tar.gz
+SRC_URL?=https://github.com/opencog/link-grammar/archive/link-grammar-5.3.2.tar.gz
 LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-5.3.2
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
