@@ -1,4 +1,4 @@
-:- use_module(lgp).
+:- use_module(lgp_local).
 
 go:-
 	set_prolog_flag(failure_number, 0),
