@@ -15,23 +15,43 @@ apt-get install swi-prolog
 
 On Windows, you will have to install SWI-Prolog for Windows.
 
-### Fetching the source code
+### Installation of the library (prolog module and foreign library)
 
-Checkout a fresh copy if the link grammar binding for SWI-Prolog:
-```git clone https://github.com/lains/swi-prolog-lg.git```
+You can either download the sources and install the package (library) manually or install the package online from Github:
 
-### Compilation
+#### Installation from Github
+
+This is the easiest way to install.
+First, check the latest release of the package by [looking at the release page](https://github.com/lains/link_grammar_prolog/releases)
+
+Write down the URL of the archive download (not the source code archive, but directly package file named `link_grammar_prolog-*.zip`)
+
+Open the SWI-Prolog command-line interface and type:
+```
+?- pack_install('https://github.com/lains/link_grammar_prolog/releases/download/link_grammar_prolog-*/link_grammar_prolog-*.zip').
+```
+
+Note: replace the above line by the correct URL you wrote down earlier.
+
+#### Installation from the sources
 
 For Windows, you will have to install:
 * either Cygwin (and always use the cygwin*.dll library altogether with the binding library)
 * or MingWin and compile natively for Windows API
 
-The easiest way is to run SWI-Prolog's built-in packager, from the root of the sources:
+##### Fetching the source code
+
+Checkout a fresh copy if the link grammar binding for SWI-Prolog:
+```git clone https://github.com/lains/swi-prolog-lg.git```
+
+##### Installation from the sources
+
+Once the sources have been extracted, you can run SWI-Prolog's built-in packager, from the root of the sources:
 ```
 swipl -g "pack_install('.'),halt" -t 'halt(1)'
 ```
 
-If the compilation succeeds, the library should be installed. You can check this from the Prolog prompt:
+Once the compilation succeeds, the library should be installed. You can check this from the Prolog prompt:
 ```
 ?- pack_list_installed.
 ```
@@ -57,13 +77,19 @@ In order to load the library, just do:
 ?- use_module(library(lgp)).
 ```
 
-In order to load the provided data (dictonary, rules, knownledge etc...), you can run the following line, *from a directory that contains the database files* or you will have to us absolute/relative path to these files:
+In order to load the provided data (dictonary, rules, knownledge etc...), you will have to specify in which directory the database files are located.
+During the installation of the package, they have been copied over to `~/lib/swipl/pack/link_grammar_prolog/data`. You can either move to the data directory using the command below, or you will have to us absolute/relative path to these files when using lgp:create_dictionary/5:
+```
+?- cd('/path/to/link/grammar/data').
+```
+
+Now, you can create a dictionary and start parsing sentences:
 ```
 ?- lgp:create_dictionary('4.0.dict', '4.0.knowledge', '4.0.constituent-knowledge', '4.0.affix', Dictionary_handle).
 ```
 
 For detailed instructions, on how to use the current Link Grammar (v4.1b) please refer to
-[the documentation embedded inside the sources](patches/4.1b//README.txt)
+[the documentation embedded inside the sources](patches/4.1b//README.md)
 
 ### Alternative compilation using static linking to the libpl.a library
 
