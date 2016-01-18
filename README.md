@@ -33,6 +33,12 @@ Open the SWI-Prolog command-line interface and type:
 
 Note: replace the above line by the correct URL you wrote down earlier.
 
+Once the compilation succeeds, the library should be installed. You can check this from the Prolog prompt:
+```
+?- pack_list_installed.
+```
+This should return (among other possible packages), the link-grammar-binding package.
+
 #### Installation from the sources
 
 For Windows, you will have to install:
@@ -42,9 +48,9 @@ For Windows, you will have to install:
 ##### Fetching the source code
 
 Checkout a fresh copy if the link grammar binding for SWI-Prolog:
-```git clone https://github.com/lains/swi-prolog-lg.git```
+```git clone https://github.com/lains/link_grammar_prolog.git```
 
-##### Installation from the sources
+##### Compilation and installation from the SWI-Prolog CLI
 
 Once the sources have been extracted, you can run SWI-Prolog's built-in packager, from the root of the sources:
 ```
