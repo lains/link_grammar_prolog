@@ -17,9 +17,6 @@
 SRC         := src
 INC         := include
 OBJ         := obj
-SWIHOME     ?= /usr/lib/swi-prolog
-#Note: probably /cygdrive/c/Program\ Files/SWI-Prolog for cygwin
-#or C:\Program Files\SWI-Prolog for VC++/lcc
 BIN         = .
 CC          = gcc
 LD          ?= $(CC)
@@ -28,14 +25,22 @@ LDFLAGS     = -O -g
 LDSOFLAGS   ?= $(LDFLAGS) -shared
 UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.*$$/cygwin/' || echo unknown)
 ifeq ($(UNAME),linux)
-SOEXT       = so
+SOEXT              = so
+SWIHOME            ?= /usr/lib/swi-prolog
 STATIC_SWILIBPL    ?= $(SWIHOME)/lib/i386/libpl.a
 else
 ifeq ($(UNAME),cygwin)
-SOEXT       = dll
-STATIC_SWILIBPL    ?= $(SWIHOME)/bin/LIBPL.DLL
+SOEXT              = dll
+SWIHOME            ?= /cygdrive/c/Program\ Files/swipl/
+STATIC_SWILIBPL    ?= $(SWIHOME)/lib/libswipl.dll.a
 else
-$(error Unsupported platform)
+ifneq (,$(filter mingw%,$(UNAME)))
+SOEXT              = dll
+SWIHOME            ?= /c/Program\ Files/swipl/
+STATIC_SWILIBPL    ?= $(SWIHOME)/lib/libswipl.dll.a
+else
+$(error Unsupported platform $(UNAME))
+endif
 endif
 endif
 SWIINC      ?= $(SWIHOME)/include

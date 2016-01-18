@@ -9,7 +9,11 @@ else
 ifeq ($(UNAME),cygwin)
 SOEXT       = dll
 else
-$(error Unsupported platform)
+ifneq (,$(filter mingw%,$(UNAME)))
+SOEXT       = dll
+else
+$(error Unsupported platform $(UNAME))
+endif
 endif
 endif
 
