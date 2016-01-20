@@ -17,6 +17,8 @@ endif
 endif
 endif
 
+SWIPL?=swipl
+
 ifeq ($(LINK_GRAMMAR_VERSION),4.1b)
 SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b.tar.gz
 LINK_GRAMMAR_BUILD_DIR?=link-4.1b
@@ -27,6 +29,8 @@ SRC_URL?=https://github.com/opencog/link-grammar/archive/link-grammar-5.3.2.tar.
 LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-5.3.2
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
+
+SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),writeln(Arch),halt" -t 'halt(1)')
 
 LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
 
@@ -143,10 +147,21 @@ clean: clean-source
 check: lgp.$(SOEXT)
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg check
 
-install:
+install: lgp.$(SOEXT)
 	install -d $(LIB_TARGET_DIR)/
 	install lgp.$(SOEXT) $(LIB_TARGET_DIR)/
 	install -d data
 	(DST=`pwd`/data/ && cd lg-source/$(LINK_GRAMMAR_DATA_DIR); cp -r * "$$DST")
+
+lib/$(SWIPL_ARCH)/lgp.$(SOEXT): lgp.$(SOEXT)
+	mkdir -p lib/$(SWIPL_ARCH)
+	@if ! cmp --quiet $< $@; then \
+		echo cp $< $@; \
+		cp $< $@; \
+	fi
+	
+pack: lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
+	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print
+	
 
 .PHONY: all patched-lg-source apply-patches patch force-patch clean-source clean check install
