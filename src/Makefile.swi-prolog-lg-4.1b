@@ -122,7 +122,7 @@ SWIPLLD:=$(shell which swipl-ld)
 
 ifneq ($(SWIPLLD),)
 $(BIN)/lgp.$(SOEXT): $(OBJECTS)
-	$(SWIPLLD) -shared -o $(BIN)/lgp.$(SOEXT) $(OBJECTS)
+	"$(SWIPLLD)" -shared -o $(BIN)/lgp.$(SOEXT) $(OBJECTS)
 else
 $(BIN)/lgp.$(SOEXT): $(OBJECTS)
 	$(CC) $(LDSOFLAGS) $(SWIPL_LDFLAGS) -o $@ $(OBJECTS) $(SWIPL_LIBS)
