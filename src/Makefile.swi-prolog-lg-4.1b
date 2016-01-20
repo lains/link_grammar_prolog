@@ -27,23 +27,30 @@ UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.
 ifeq ($(UNAME),linux)
 SOEXT              = so
 SWIHOME            ?= /usr/lib/swi-prolog
-STATIC_SWILIBPL    ?= $(SWIHOME)/lib/i386/libpl.a
+SWIPL_LIBS         ?= -lpl
+SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
+STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/i386/libpl.a
 else
 ifeq ($(UNAME),cygwin)
 SOEXT              = dll
 SWIHOME            ?= /cygdrive/c/Program\ Files/swipl/
-STATIC_SWILIBPL    ?= $(SWIHOME)/lib/libswipl.dll.a
+SWIPL_LIBS         ?= -lswipl
+SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
+STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/libswipl.dll.a
 else
 ifneq (,$(filter mingw%,$(UNAME)))
 SOEXT              = dll
 SWIHOME            ?= /c/Program\ Files/swipl/
-STATIC_SWILIBPL    ?= $(SWIHOME)/lib/libswipl.dll.a
+SWIPL_LIBS         ?= -lswipl
+SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
+STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/libswipl.dll.a
 else
 $(error Unsupported platform $(UNAME))
 endif
 endif
 endif
-SWIINC      ?= $(SWIHOME)/include
+SWIINC             ?= $(SWIHOME)/include
+SWIPL_CFLAGS       ?= -I$(SWIINC)
 
 INCLUDES    =\
 $(INC)/lgp.h \
@@ -111,16 +118,14 @@ $(OBJ)/print-util.o
 all:
 	$(BIN)/lgp.$(SOEXT)
 
-ifeq ($(STATIC_SWILIB),)
-$(BIN)/lgp.$(SOEXT): $(OBJECTS)
-	swipl-ld -shared -o $(BIN)/lgp.$(SOEXT) $(OBJECTS)
-else
-$(BIN)/lgp.$(SOEXT): $(OBJECTS) $(STATIC_SWILIBPL)
-       $(CC) $(LDSOFLAGS) -o $@ $(OBJECTS) $(STATIC_SWILIBPL)
+SWIPLLD:=$(shell which swipl-ld)
 
-$(STATIC_SWILIBPL):
-	@echo "SWI-Prolog library not found ($(STATIC_SWILIBPL)), please set environment variable STATIC_SWILIBPL to the full path for libpl.a or libswpl.a" >&2
-	@exit 1
+ifneq ($(SWIPLLD),)
+$(BIN)/lgp.$(SOEXT): $(OBJECTS)
+	$(SWIPLLD) -shared -o $(BIN)/lgp.$(SOEXT) $(OBJECTS)
+else
+$(BIN)/lgp.$(SOEXT): $(OBJECTS)
+	$(CC) $(LDSOFLAGS) $(SWIPL_LDFLAGS) -o $@ $(OBJECTS) $(SWIPL_LIBS)
 endif
 
 $(SRC)/lgp.c: lgp.c
@@ -130,7 +135,7 @@ $(INC)/lgp.h: lgp.h
 	cmp --quiet $< $@ || cp $< $@
 
 $(OBJ)/lgp.o: $(SRC)/lgp.c $(INCLUDES)
-	$(CC) -c $(CFLAGS) -I$(INC) -I$(SWIINC) $(SRC)/lgp.c -o $(OBJ)/lgp.o
+	$(CC) -c $(CFLAGS) -I$(INC) $(SWIPL_CFLAGS) $(SRC)/lgp.c -o $(OBJ)/lgp.o
 
 $(OBJ)/%.o: $(SRC)/%.c $(INCLUDES)
 	$(CC) -c $(CFLAGS) -I$(INC) -o $@ $<
