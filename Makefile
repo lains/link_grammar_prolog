@@ -138,7 +138,7 @@ clean-source:
 	rm -rf lg-source-$(LINK_GRAMMAR_VERSION)/
 
 clean: clean-source
-	rm -f lg-source lg-source-archive-$(LINK_GRAMMAR_VERSION).*
+	rm -rf lg-source lg-source-archive-$(LINK_GRAMMAR_VERSION).*
 
 check: lgp.$(SOEXT)
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg check
