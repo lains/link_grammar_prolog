@@ -19,6 +19,9 @@ endif
 
 SWIPL?=swipl
 
+PACK_VERSION?=4.1.0.2
+TARGET_ZIP_PACKAGE=./link_grammar_prolog-$(PACK_VERSION).zip
+
 ifeq ($(LINK_GRAMMAR_VERSION),4.1b)
 SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b.tar.gz
 LINK_GRAMMAR_BUILD_DIR?=link-4.1b
@@ -30,7 +33,7 @@ LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-5.3.2
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
 
-SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),writeln(Arch),halt" -t 'halt(1)')
+SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)')
 
 LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
 
@@ -159,9 +162,10 @@ lib/$(SWIPL_ARCH)/lgp.$(SOEXT): lgp.$(SOEXT)
 		echo cp $< $@; \
 		cp $< $@; \
 	fi
-	
-pack: lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
-	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print
-	
 
-.PHONY: all patched-lg-source apply-patches patch force-patch clean-source clean check install
+pack: $(TARGET_ZIP_PACKAGE)
+
+$(TARGET_ZIP_PACKAGE): lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
+	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print0 | xargs -0 zip -u $@
+
+.PHONY: all patched-lg-source apply-patches patch force-patch clean-source clean check install pack
