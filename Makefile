@@ -121,16 +121,24 @@ install: lgp.$(SOEXT)
 	install -d data
 	(DST=`pwd`/data/ && cd lg-source/$(LINK_GRAMMAR_DATA_DIR); cp -r * "$$DST")
 
+ifeq ($(SWIPL_ARCH),)
+$(TARGET_ZIP_PACKAGE):
+	@echo "Could not guess SWIPL_ARCH" >&2
+	@echo "Either force its value by setting variable SWIPL_ARCH or modify the PATH to be able to execute the swipl command (or provide its full path in variable SWIPL)" >&2
+	@exit 1
+else
+$(TARGET_ZIP_PACKAGE): lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
+	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print0 | xargs -0 zip -u $@
+
 lib/$(SWIPL_ARCH)/lgp.$(SOEXT): lgp.$(SOEXT)
 	mkdir -p lib/$(SWIPL_ARCH)
 	@if ! cmp --quiet $< $@; then \
 		echo cp $< $@; \
 		cp $< $@; \
 	fi
+endif
 
 pack: $(TARGET_ZIP_PACKAGE)
 
-$(TARGET_ZIP_PACKAGE): lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
-	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print0 | xargs -0 zip -u $@
 
 .PHONY: all patched-lg-source apply-patches patch force-patch clean-source clean check install pack
