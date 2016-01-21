@@ -1,49 +1,10 @@
 CURRENT_MAKEFILE_LIST := $(MAKEFILE_LIST)
+TOPDIR_RELATIVE := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
+TOPDIR := $(shell cd "$(TOPDIR_RELATIVE)" && pwd)
 
-LINK_GRAMMAR_VERSION?=4.1b
-
-UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.*$$/cygwin/' || echo unknown)
-ifeq ($(UNAME),linux)
-SOEXT       = so
-else
-ifeq ($(UNAME),cygwin)
-SOEXT       = dll
-else
-ifneq (,$(filter mingw%,$(UNAME)))
-SOEXT       = dll
-else
-$(error Unsupported platform $(UNAME))
-endif
-endif
-endif
-
-SWIPL?=swipl
+include Makefile.inc
 
 PACK_VERSION?=4.1.0.2
-TARGET_ZIP_PACKAGE=./link_grammar_prolog-$(PACK_VERSION).zip
-
-ifeq ($(LINK_GRAMMAR_VERSION),4.1b)
-SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b.tar.gz
-LINK_GRAMMAR_BUILD_DIR?=link-4.1b
-LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
-endif
-ifeq ($(LINK_GRAMMAR_VERSION),5.3.2)
-SRC_URL?=https://github.com/opencog/link-grammar/archive/link-grammar-5.3.2.tar.gz
-LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-5.3.2
-LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
-endif
-
-SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)')
-
-LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
-
-TOPDIR := $(dir $(firstword $(CURRENT_MAKEFILE_LIST)))
-
-ifeq ($(PACKSODIR),)
-LIB_TARGET_DIR=./lib
-else
-LIB_TARGET_DIR?=$(PACKSODIR)
-endif
 
 all: lgp.$(SOEXT)
 
@@ -70,6 +31,9 @@ lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg: src/Makefile.swi-pro
 		echo cp $< $@; \
 		cp $< $@; \
 	fi
+
+lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.topdir.inc:
+	@echo "TOPDIR:=$(TOPDIR)" > $@
 
 lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.c: src/lgp.c lg-source/$(LINK_GRAMMAR_BUILD_DIR)/
 	@if ! cmp --quiet $< $@; then \
@@ -109,6 +73,7 @@ patched-lg-source: lg-source-$(LINK_GRAMMAR_VERSION)/ lg-source/$(LINK_GRAMMAR_B
 		$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) clean-source || exit 1; \
 	fi
 	$(MAKE) LINK_GRAMMAR_VERSION=$(LINK_GRAMMAR_VERSION) lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.swi-prolog-lg \
+	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/Makefile.topdir.inc \
 	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.c \
 	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.h \
 	                                                     lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.pl \
