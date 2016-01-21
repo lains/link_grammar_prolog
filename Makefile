@@ -6,12 +6,6 @@ include Makefile.inc
 
 PACK_VERSION:=$(shell cd $(TOPDIR) && $(SWIPL) -g "['pack'],version(Version),write(Version),halt" -t 'halt(1)' 2>/dev/null)
 
-ifeq ($(PACK_VERSION),)
-$(error Could not retrieve PACK_VERSION from pack.pl file)
-else
-TARGET_ZIP_PACKAGE:=$(TOPDIR)/link_grammar_prolog-$(PACK_VERSION).zip
-endif
-
 all: lgp.$(SOEXT)
 
 lgp.$(SOEXT): lg-source/$(LINK_GRAMMAR_BUILD_DIR)/lgp.$(SOEXT)
@@ -147,6 +141,12 @@ lib/$(SWIPL_ARCH)/lgp.$(SOEXT): lgp.$(SOEXT)
 	fi
 endif
 
+ifeq ($(PACK_VERSION),)
+pack:
+	$(error Could not retrieve PACK_VERSION from pack.pl file)
+else
+TARGET_ZIP_PACKAGE:=$(TOPDIR)/link_grammar_prolog-$(PACK_VERSION).zip
 pack: $(TARGET_ZIP_PACKAGE)
+endif
 
 .PHONY: all patched-lg-source apply-patches patch force-patch clean-source clean check install pack
