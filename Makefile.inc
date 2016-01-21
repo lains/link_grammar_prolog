@@ -32,8 +32,7 @@ $(error Missing TOPDIR variable (required by Makefile.inc))
 endif
 
 SWIPL?=swipl
-
-TARGET_ZIP_PACKAGE=$(TOPDIR)/link_grammar_prolog-$(PACK_VERSION).zip
+SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)' 2>/dev/null)
 
 ifeq ($(LINK_GRAMMAR_VERSION),4.1b)
 SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b.tar.gz
@@ -45,8 +44,6 @@ SRC_URL?=https://github.com/opencog/link-grammar/archive/link-grammar-5.3.2.tar.
 LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-5.3.2
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
-
-SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)' 2>/dev/null)
 
 LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
 

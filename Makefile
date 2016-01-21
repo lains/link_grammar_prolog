@@ -4,7 +4,13 @@ TOPDIR := $(shell cd "$(TOPDIR_RELATIVE)" && pwd)
 
 include Makefile.inc
 
-PACK_VERSION?=4.1.0.2
+PACK_VERSION:=$(shell cd $(TOPDIR) && $(SWIPL) -g "['pack'],version(Version),write(Version),halt" -t 'halt(1)' 2>/dev/null)
+
+ifeq ($(PACK_VERSION),)
+$(error Could not retrieve PACK_VERSION from pack.pl file)
+else
+TARGET_ZIP_PACKAGE:=$(TOPDIR)/link_grammar_prolog-$(PACK_VERSION).zip
+endif
 
 all: lgp.$(SOEXT)
 
@@ -130,6 +136,7 @@ $(TARGET_ZIP_PACKAGE):
 	$(error Could not guess SWIPL_ARCH. Either force its value by setting variable SWIPL_ARCH or modify the PATH to be able to execute the swipl command (or provide its full path in variable SWIPL))
 else
 $(TARGET_ZIP_PACKAGE): lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
+	@echo Building package $(TARGET_ZIP_PACKAGE)
 	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print0 | xargs -0 zip -u $@
 
 lib/$(SWIPL_ARCH)/lgp.$(SOEXT): lgp.$(SOEXT)
