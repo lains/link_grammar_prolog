@@ -95,13 +95,14 @@ $(OBJ)/print-util.o
 all:
 	$(BIN)/lgp.$(SOEXT)
 
-SWIPLLD:=$(shell which swipl-ld)
+SWIPLLD:=$(shell which swipl-ld 2>/dev/null)
 
 ifneq ($(SWIPLLD),)
 $(BIN)/lgp.$(SOEXT): $(OBJECTS)
 	"$(SWIPLLD)" -shared -o $(BIN)/lgp.$(SOEXT) $(OBJECTS)
 else
 $(BIN)/lgp.$(SOEXT): $(OBJECTS)
+	@echo "swipl-ld not found (please set PATH of SWIPLLD if you want to use it). We will directly invoke linker instead, to build lgp.$(SOEXT)"
 	$(CC) $(LDSOFLAGS) $(SWIPL_LDFLAGS) -o $@ $(OBJECTS) $(SWIPL_LIBS)
 endif
 
