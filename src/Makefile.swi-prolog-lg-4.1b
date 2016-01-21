@@ -122,7 +122,7 @@ $(OBJ)/%.o: $(SRC)/%.c $(INCLUDES)
 	sed -e 's/\(load_foreign_library(\)foreign[(]\([^)]*\)[)]/\1\2/' $< > $@
 
 check: $(BIN)/lgp.$(SOEXT) ./lgp_local.pl ./lgp_lib_test.pl
-	$(SWIPL) -g "['lgp_lib_test'],go,halt" -t 'halt(1)'
+	"$(SWIPL)" -g "['lgp_lib_test'],go,halt" -t 'halt(1)'
 
 clean:
 	/bin/rm -f $(OBJ)/*.o

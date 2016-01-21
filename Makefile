@@ -4,7 +4,7 @@ TOPDIR := $(shell cd "$(TOPDIR_RELATIVE)" && pwd)
 
 include Makefile.inc
 
-PACK_VERSION:=$(shell cd $(TOPDIR) && $(SWIPL) -g "['pack'],version(Version),write(Version),halt" -t 'halt(1)' 2>/dev/null)
+PACK_VERSION:=$(shell cd $(TOPDIR) && "$(SWIPL)" -g "['pack'],version(Version),write(Version),halt" -t 'halt(1)' 2>/dev/null)
 
 all: lgp.$(SOEXT)
 
