@@ -47,18 +47,35 @@ Once the compilation succeeds, the library should be installed. You can check th
 ```
 This should return (among other possible packages), the link-grammar-binding package.
 
-### Installation of knowledge files
+### Knowledge files
 
 The Link grammar library requires several database files and directories in order to run.
-You will find these files/directories wihin the sources (once make has completed successfully) in the directory `lg-source/link*/data`, but more conveniently, they are also copied in the `data/` folder during the `make install` stage.
-
+This data directory contains:
 * `4.0.dict`
 * `4.0.knowledge`
 * `4.0.constituent-knowledge`
 * `4.0.affix`
 * `words`
 
-You will have to either copy over theses files/directories and their content inside the current directory at the moment the lgp_lib:create_dictionary/5 predicate is callde, or create a symbolic link or provide valid PATHs (relative/absolute) to these files when running the lgp_lib:create_dictionary/5 predicate.
+In order to load the provided data (dictonary, rules, knowledge etc...), you will have to specify in which directory the database files are located.
+You will have to either copy over theses files/directories and their content inside the current directory at the moment the lgp_lib:create_dictionary/5 predicate is called, or create a symbolic link or provide valid PATHs (relative/absolute) to these files when running the create_dictionary/5 predicate.
+
+#### `data` files when compiling from sources
+
+If you recompile the package from source, the data files are downloaded as part of the build process and the `data` directory is populated in the pack.
+
+you will find these files/directories in the subdirectory `data/` under the directory where the pack has been installed.
+
+To find out the location of this directory, just type the following on the SWI-Prolog prompt:
+```
+?- pack_property('link_grammar_prolog', directory(Pack_dir)),atom_concat(Pack_dir, '/data', Data_dir).
+```
+
+The result will be displayed as `Data_dir`
+
+#### Getting `data` files when doing an online installation
+
+When using the online installation, you will have to manually download [the data directory directly from the original sources of the Link Grammar library](http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b/data/) and save it locally before you can use create_dictionary/5 below.
 
 ## Using the library
 
@@ -67,11 +84,7 @@ In order to load the library, just do:
 ?- use_module(library(lgp)).
 ```
 
-In order to load the provided data (dictonary, rules, knownledge etc...), you will have to specify in which directory the database files are located.
-During the installation of the package, they have been copied over to `~/lib/swipl/pack/link_grammar_prolog/data`. You can either move to the data directory using the command below, or you will have to us absolute/relative path to these files when using lgp:create_dictionary/5:
-```
-?- cd('/path/to/link/grammar/data').
-```
+You can now either move to the `data` directory or you will have to use an absolute/relative path to the 4 files provided as argument of create_dictionary/5:
 
 Now, you can create a dictionary and start parsing sentences:
 ```
