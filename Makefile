@@ -123,9 +123,7 @@ install: lgp.$(SOEXT)
 
 ifeq ($(SWIPL_ARCH),)
 $(TARGET_ZIP_PACKAGE):
-	@echo "Could not guess SWIPL_ARCH" >&2
-	@echo "Either force its value by setting variable SWIPL_ARCH or modify the PATH to be able to execute the swipl command (or provide its full path in variable SWIPL)" >&2
-	@exit 1
+	$(error Could not guess SWIPL_ARCH. Either force its value by setting variable SWIPL_ARCH or modify the PATH to be able to execute the swipl command (or provide its full path in variable SWIPL))
 else
 $(TARGET_ZIP_PACKAGE): lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
 	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print0 | xargs -0 zip -u $@
@@ -139,6 +137,5 @@ lib/$(SWIPL_ARCH)/lgp.$(SOEXT): lgp.$(SOEXT)
 endif
 
 pack: $(TARGET_ZIP_PACKAGE)
-
 
 .PHONY: all patched-lg-source apply-patches patch force-patch clean-source clean check install pack

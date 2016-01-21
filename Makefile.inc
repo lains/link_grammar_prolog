@@ -27,6 +27,10 @@ endif
 endif
 endif
 
+ifeq ($(TOPDIR),)
+$(error Missing TOPDIR variable (required by Makefile.inc))
+endif
+
 SWIPL?=swipl
 
 TARGET_ZIP_PACKAGE=./link_grammar_prolog-$(PACK_VERSION).zip
