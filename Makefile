@@ -111,6 +111,10 @@ clean-source:
 
 clean: clean-source
 	rm -rf lg-source lg-source-archive-$(LINK_GRAMMAR_VERSION).*
+	rm -f lgp.$(SOEXT)
+ifneq ($(SWIPL_ARCH),)
+	rm -f lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
+endif
 
 check: lgp.$(SOEXT)
 	$(MAKE) -C lg-source/$(LINK_GRAMMAR_BUILD_DIR) -f Makefile.swi-prolog-lg check
