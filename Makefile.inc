@@ -33,7 +33,7 @@ endif
 
 SWIPL?=swipl
 
-TARGET_ZIP_PACKAGE=./link_grammar_prolog-$(PACK_VERSION).zip
+TARGET_ZIP_PACKAGE=$(TOPDIR)/link_grammar_prolog-$(PACK_VERSION).zip
 
 ifeq ($(LINK_GRAMMAR_VERSION),4.1b)
 SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b.tar.gz
@@ -51,7 +51,7 @@ SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),write(Arch),hal
 LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
 
 ifeq ($(PACKSODIR),)
-LIB_TARGET_DIR=./lib
+LIB_TARGET_DIR:=$(TOPDIR)/lib
 else
 LIB_TARGET_DIR?=$(PACKSODIR)
 endif
