@@ -2,13 +2,25 @@ LINK_GRAMMAR_VERSION?=4.1b
 
 UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.*$$/cygwin/' || echo unknown)
 ifeq ($(UNAME),linux)
-SOEXT       = so
+SOEXT              = so
+SWIHOME            ?= /usr/lib/swi-prolog
+SWIPL_LIBS         ?= -lpl
+SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
+STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/i386/libpl.a
 else
 ifeq ($(UNAME),cygwin)
-SOEXT       = dll
+SOEXT              = dll
+SWIHOME            ?= /cygdrive/c/Program\ Files/swipl/
+SWIPL_LIBS         ?= -lswipl
+SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
+STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/libswipl.dll.a
 else
 ifneq (,$(filter mingw%,$(UNAME)))
-SOEXT       = dll
+SOEXT              = dll
+SWIHOME            ?= /c/Program\ Files/swipl/
+SWIPL_LIBS         ?= -lswipl
+SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
+STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/libswipl.dll.a
 else
 $(error Unsupported platform $(UNAME))
 endif

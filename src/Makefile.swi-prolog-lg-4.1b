@@ -14,6 +14,9 @@
 # On at least one system (BSDI 3.0) I had to use gmake instead of make
 # to get this makefile to work.     -- D. Sleator, June 2000
 
+include ./Makefile.topdir.inc
+include $(TOPDIR)/Makefile.inc
+
 SRC         := src
 INC         := include
 OBJ         := obj
@@ -23,32 +26,6 @@ LD          ?= $(CC)
 CFLAGS      = -g -Wall -Wno-unused-function -Wno-unused-but-set-variable -Wno-unused-result -O
 LDFLAGS     = -O -g
 LDSOFLAGS   ?= $(LDFLAGS) -shared
-UNAME       = $(shell uname -s 2>/dev/null | tr 'A-Z' 'a-z' | sed -e 's/^cygwin.*$$/cygwin/' || echo unknown)
-ifeq ($(UNAME),linux)
-SOEXT              = so
-SWIHOME            ?= /usr/lib/swi-prolog
-SWIPL_LIBS         ?= -lpl
-SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
-STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/i386/libpl.a
-else
-ifeq ($(UNAME),cygwin)
-SOEXT              = dll
-SWIHOME            ?= /cygdrive/c/Program\ Files/swipl/
-SWIPL_LIBS         ?= -lswipl
-SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
-STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/libswipl.dll.a
-else
-ifneq (,$(filter mingw%,$(UNAME)))
-SOEXT              = dll
-SWIHOME            ?= /c/Program\ Files/swipl/
-SWIPL_LIBS         ?= -lswipl
-SWIPL_LDFLAGS      ?= -L$(SWIHOME)/lib
-STATIC_LIBSWIPL    ?= $(SWIHOME)/lib/libswipl.dll.a
-else
-$(error Unsupported platform $(UNAME))
-endif
-endif
-endif
 SWIINC             ?= $(SWIHOME)/include
 SWIPL_CFLAGS       ?= -I$(SWIINC)
 
@@ -144,7 +121,7 @@ $(OBJ)/%.o: $(SRC)/%.c $(INCLUDES)
 	sed -e 's/\(load_foreign_library(\)foreign[(]\([^)]*\)[)]/\1\2/' $< > $@
 
 check: $(BIN)/lgp.$(SOEXT) ./lgp_local.pl ./lgp_lib_test.pl
-	swipl -g "['lgp_lib_test'],go,halt" -t 'halt(1)'
+	$(SWIPL) -g "['lgp_lib_test'],go,halt" -t 'halt(1)'
 
 clean:
 	/bin/rm -f $(OBJ)/*.o
