@@ -46,7 +46,7 @@ LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-5.3.2
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
 
-SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)')
+SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)' 2>/dev/null)
 
 LINK_GRAMMAR_APPLIED_PATCHES_DIR=lg-source-$(LINK_GRAMMAR_VERSION)/.applied-patches/
 
