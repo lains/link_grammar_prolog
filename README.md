@@ -9,7 +9,9 @@ The parser also produces a "constituent" representation of a sentence (showing n
 
 ## Installation of the library (prolog module and foreign library)
 
-You can either download the sources and install the package (library) manually or install the package online from Github:
+You can either download the sources and install the package (library) manually or install the package online from Github.
+Under Windows, online installation is recommended (see below).
+Under Linux, recompilation is recommended instead (see [here](BUILD.md)).
 
 ### Online installation from the SWI-Prolog official known pack list
 
@@ -60,7 +62,7 @@ This data directory contains:
 In order to load the provided data (dictonary, rules, knowledge etc...), you will have to specify in which directory the database files are located.
 You will have to either copy over theses files/directories and their content inside the current directory at the moment the lgp_lib:create_dictionary/5 predicate is called, or create a symbolic link or provide valid PATHs (relative/absolute) to these files when running the create_dictionary/5 predicate.
 
-#### `data` files when compiling from sources
+#### Locating `data` files when compiling from sources
 
 If you recompile the package from source, the data files are downloaded as part of the build process and the `data` directory is populated in the pack.
 
