@@ -167,17 +167,17 @@ scheduled_test_name('Linkage Set', 'deletion of non-existing handle',
 	create_parms_dictionary(Create_parms_dict),
 	create_parms_sentence_unique_linkage(Create_parms_sent),
 	create_parms_parse_options_normal(Create_parms_opts).
-%scheduled_test_name('Linkage Set', 'deletion of linkage set object before cut of get_linkage', 
-%		  [create_parms_dict=Create_parms_dict,
-%		   create_parms_sent=Create_parms_sent,
-%		   create_parms_opts=Create_parms_opts,
-%		   handle('Dictionary')=_Handle_dict,
-%		   handle('Sentence')=_Handle_sent,
-%		   handle('Parse Options')=_Handle_opts,
-%		   handle('Linkage Set')=_Handle_link]):-
-%	create_parms_dictionary(Create_parms_dict),
-%	create_parms_sentence_multiple_linkages(Create_parms_sent, _Number_linkage),
-%	create_parms_parse_options_normal(Create_parms_opts).
+scheduled_test_name('Linkage Set', 'deletion of linkage set object before cut of get_linkage', 
+		  [create_parms_dict=Create_parms_dict,
+		   create_parms_sent=Create_parms_sent,
+		   create_parms_opts=Create_parms_opts,
+		   handle('Dictionary')=_Handle_dict,
+		   handle('Sentence')=_Handle_sent,
+		   handle('Parse Options')=_Handle_opts,
+		   handle('Linkage Set')=_Handle_link]):-
+	create_parms_dictionary(Create_parms_dict),
+	create_parms_sentence_multiple_linkages(Create_parms_sent, _Number_linkage),
+	create_parms_parse_options_normal(Create_parms_opts).
 
 %scheduled_test_name('Dictionary', 'multiple creation/deletion', [base=dictionary]).
 
