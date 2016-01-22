@@ -3175,9 +3175,9 @@ char     *cs, *cd; /* String manipulation pointers */
   if (connector_subscript_name!=NULL) { /* There is a subscript */
     for (cs=connector_name_end; cs--!=connector_subscript_name; ) { /* We parse this string from the end to the beginning because of tail-to-head list construction method */
       if (*cs=='*')
-	PL_put_variable(new_connector_subscript_element); /* an '*' character in the subscript will be handled as an unbound term inside the subscript Prolog list */
+        PL_put_variable(new_connector_subscript_element); /* an '*' character in the subscript will be handled as an unbound term inside the subscript Prolog list */
       else
-	PL_put_atom_chars(new_connector_subscript_element, cs); /* Create an atom with the subscript inside (cs points toward the last character, followed by a '\0') */
+        PL_put_atom_chars(new_connector_subscript_element, cs); /* Create an atom with the subscript inside (cs points toward the last character, followed by a '\0') */
       PL_cons_list(constructed_connector_subscript_list, new_connector_subscript_element, constructed_connector_subscript_list); /* Add this element to the list */
 
       *cs='\0'; /* Set the new string end to overwrite the character added to the list (last character). cs will now progress toward the beginning of the connector_subscript_name string */
@@ -3191,7 +3191,7 @@ char     *cs, *cd; /* String manipulation pointers */
   PL_put_functor(connector_term, FUNCTOR_hyphen2); /* Create the template for connector-connector_subscript (separated by an hyphen) */
   
   return (PL_unify_arg(1, connector_term, connector_name_term) &&
-	  PL_unify_arg(2, connector_term, constructed_connector_subscript_list));
+          PL_unify_arg(2, connector_term, constructed_connector_subscript_list));
 }
 
 
@@ -3296,40 +3296,40 @@ char       *label, *llabel, *rlabel; /* Connector names */
     right_word=linkage_get_word(linkage, r);
 
     if (!(word_to_term(right_word, right_word_term) &&
-	  word_to_term(left_word, left_word_term))) {
+          word_to_term(left_word, left_word_term))) {
       exception=PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 1),
-		    PL_CHARS, "cant_create_word_term");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 1),
+                    PL_CHARS, "cant_create_word_term");
       return PL_raise_exception(exception);
     }
     
     if (!create_connector(label, connector)) {
       exception=PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 1),
-		    PL_CHARS, "cant_create_connector_term");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 1),
+                    PL_CHARS, "cant_create_connector_term");
       return PL_raise_exception(exception);
     }
     
     PL_put_functor(words_lr_link, FUNCTOR_connection3); /* Construct the compound putting the left and right words as parameters of the connector structure */
     if (!(PL_unify_arg(1, words_lr_link, connector) &&
-	  PL_unify_arg(2, words_lr_link, left_word_term) &&
-	  PL_unify_arg(3, words_lr_link, right_word_term))) {
+          PL_unify_arg(2, words_lr_link, left_word_term) &&
+          PL_unify_arg(3, words_lr_link, right_word_term))) {
       exception=PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 1),
-		    PL_CHARS, "cant_create_words_link_term");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 1),
+                    PL_CHARS, "cant_create_words_link_term");
       return PL_raise_exception(exception);
     }
     
     PL_put_functor(new_link_element, FUNCTOR_link2);
     if (!(PL_unify_arg(1, new_link_element, constructed_domain_list) &&
-	  PL_unify_arg(2, new_link_element, words_lr_link))) { /* We have constructed the link/2 term gathering the link details and the domains*/
+          PL_unify_arg(2, new_link_element, words_lr_link))) { /* We have constructed the link/2 term gathering the link details and the domains*/
       exception=PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 1),
-		    PL_CHARS, "cant_create_link_term");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 1),
+                    PL_CHARS, "cant_create_link_term");
       return PL_raise_exception(exception);
     }
     PL_cons_list(constructed_links_list, new_link_element, constructed_links_list);
@@ -3406,14 +3406,14 @@ context_list*      root_context_list;
     if (current_context_in_context_list->context_associated_to_link == context) { /* We found a matching context in the list, we will remove it... */
       //  //@@ Breakpoint 6 Match found. Will be deleted //Lionel!!!
       if (previous_context_in_context_list!=NULL) { /* We are not currently processing the root of the list */
-	//	//@@ Breakpoint 7 Match found is not on the root //Lionel!!!
+        //	//@@ Breakpoint 7 Match found is not on the root //Lionel!!!
         previous_context_in_context_list->next=current_context_in_context_list->next; /* Shortcut this context in the context list */
-	//	//@! "Breakpoint 7.1 %p->next has been set to %p", previous_context_in_context_list, current_context_in_context_list->next //Lionel!!!
+        //	//@! "Breakpoint 7.1 %p->next has been set to %p", previous_context_in_context_list, current_context_in_context_list->next //Lionel!!!
       }
       else { /* This is the case when no previous_context_in_context_list has been recorded yet, which means that the element that matched was actually the root of the list */
-	//	//@@ Breakpoint 8 Match found is on the root //Lionel!!!
+        //	//@@ Breakpoint 8 Match found is on the root //Lionel!!!
         link_object->payload.associated_context_list=current_context_in_context_list->next;
-	//	//@! "Breakpoint 8.1 Root of context list has been set to %p", current_context_in_context_list->next //Lionel!!!
+        //	//@! "Breakpoint 8.1 Root of context list has been set to %p", current_context_in_context_list->next //Lionel!!!
       }
       //      //@@ Breakpoint 9 freeing up memory for the context_list item //Lionel!!!
       following_context_in_context_list=current_context_in_context_list->next; /* We do this before freeing current_context_in_context_list, of course! */
@@ -3443,8 +3443,8 @@ context_list*      root_context_list;
 **/
 
 foreign_t pl_get_linkage(term_t linkage_set_handle,
-			 term_t t_result,
-			 control_t handle) {
+                         term_t t_result,
+                         control_t handle) {
 
 pl_get_linkage_context        *context;
 
@@ -3465,9 +3465,9 @@ opts_linked_list_object       *opts_object; /* Linked object corresponding to th
     if (!get_index_from_handle(FUNCTOR_linkageset1, linkage_set_handle, &link_handle_index)) {
       exception = PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		    PL_CHARS, "linkage_set",
-		    PL_CHARS, "bad_handle");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                    PL_CHARS, "linkage_set",
+                    PL_CHARS, "bad_handle");
       return PL_raise_exception(exception);
     }
 
@@ -3486,9 +3486,9 @@ opts_linked_list_object       *opts_object; /* Linked object corresponding to th
     if (context == NULL) { /* Check if memory has been successfully allocated */
       exception=PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		    PL_CHARS, "foreign_context",
-		    PL_CHARS, "not_enough_memory");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                    PL_CHARS, "foreign_context",
+                    PL_CHARS, "not_enough_memory");
       return PL_raise_exception(exception);
     }
     context->link_handle_index = link_handle_index;
@@ -3749,9 +3749,9 @@ term_t exception; /* Handle for a possible exception */
   if (root_dict_list != NULL) {
     exception=PL_new_term_ref();
     PL_unify_term(exception,
-		  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		  PL_CHARS, "dictionary",
-		  PL_CHARS, "list_corrupted");
+                  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                  PL_CHARS, "dictionary",
+                  PL_CHARS, "list_corrupted");
     PL_raise_exception(exception);
     return;
   }
@@ -3760,9 +3760,9 @@ term_t exception; /* Handle for a possible exception */
   if (root_dict_list == NULL) { /* Allocation failed */
     exception=PL_new_term_ref();
     PL_unify_term(exception,
-		  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		  PL_CHARS, "dictionary",
-		  PL_CHARS, "not_enough_memory");
+                  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                  PL_CHARS, "dictionary",
+                  PL_CHARS, "not_enough_memory");
     PL_raise_exception(exception);
     return;
   }
@@ -3774,9 +3774,9 @@ term_t exception; /* Handle for a possible exception */
   if (root_opts_list == NULL) { /* Allocation failed */
     exception=PL_new_term_ref();
     PL_unify_term(exception,
-		  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		  PL_CHARS, "parse_options",
-		  PL_CHARS, "not_enough_memory");
+                  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                  PL_CHARS, "parse_options",
+                  PL_CHARS, "not_enough_memory");
     PL_raise_exception(exception);
     return;
   }
@@ -3788,9 +3788,9 @@ term_t exception; /* Handle for a possible exception */
   if (root_link_list == NULL) { /* Allocation failed */
     exception=PL_new_term_ref();
     PL_unify_term(exception,
-		  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		  PL_CHARS, "linkage_set",
-		  PL_CHARS, "not_enough_memory");
+                  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                  PL_CHARS, "linkage_set",
+                  PL_CHARS, "not_enough_memory");
     PL_raise_exception(exception);
     return;
   }
@@ -3802,9 +3802,9 @@ term_t exception; /* Handle for a possible exception */
   if (root_sent_list == NULL) { /* Allocation failed */
     exception=PL_new_term_ref();
     PL_unify_term(exception,
-		  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		  PL_CHARS, "sentence",
-		  PL_CHARS, "not_enough_memory");
+                  PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                  PL_CHARS, "sentence",
+                  PL_CHARS, "not_enough_memory");
     PL_raise_exception(exception);
     return;
   }
