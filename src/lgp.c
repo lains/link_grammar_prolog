@@ -3500,9 +3500,9 @@ opts_linked_list_object       *opts_object; /* Linked object corresponding to th
       exfree(context, sizeof(pl_get_linkage_context)); /* Free the context structure */
       exception=PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		    PL_CHARS, "linkage_to_compound",
-		    PL_CHARS, "failed");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                    PL_CHARS, "linkage_to_compound",
+                    PL_CHARS, "failed");
       return PL_raise_exception(exception);
     }
     else {
@@ -3536,9 +3536,9 @@ opts_linked_list_object       *opts_object; /* Linked object corresponding to th
       exfree(context, sizeof(pl_get_linkage_context)); /* Free the context structure */
       exception=PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		    PL_CHARS, "linkage_set",
-		    PL_CHARS, "reference_erased");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                    PL_CHARS, "linkage_set",
+                    PL_CHARS, "reference_erased");
       return PL_raise_exception(exception);
     }
 
@@ -3596,9 +3596,9 @@ opts_linked_list_object       *opts_object; /* Linked object corresponding to th
       exfree(context, sizeof(pl_get_linkage_context)); /* Free the context structure */
       exception=PL_new_term_ref();
       PL_unify_term(exception,
-		    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
-		    PL_CHARS, "linkage_set",
-		    PL_CHARS, "reference_erased");
+                    PL_FUNCTOR, PL_new_functor(PL_new_atom("lgp_api_error"), 2),
+                    PL_CHARS, "linkage_set",
+                    PL_CHARS, "reference_erased");
       return PL_raise_exception(exception);
     }
 
@@ -3622,11 +3622,10 @@ opts_linked_list_object       *opts_object; /* Linked object corresponding to th
     if (context!=NULL) {
       link_handle_index = context->link_handle_index; /* This part retrieves the context variables and stores them inside local stack variables */
       if (link_handle_index != -1) {
-	if (get_object_from_handle_index_in_chained_list_with_exception_handling("linkage_set", NULL,
-										 root_link_list, link_handle_index, (generic_linked_list_object **)&link_object)) {
-	  
-	  delete_from_context_link(link_object, context); /* Delete all references to our context from the linkage set object we used to reference, given that we are going to destroy the context item itself */
-	}
+        if (get_object_from_handle_index_in_chained_list_with_exception_handling("linkage_set", NULL,
+                                                                                 root_link_list, link_handle_index, (generic_linked_list_object **)&link_object)) {
+          delete_from_context_link(link_object, context); /* Delete all references to our context from the linkage set object we used to reference, given that we are going to destroy the context item itself */
+        }
       }
       exfree(context, sizeof(pl_get_linkage_context)); /* Free the context structure */
     }
