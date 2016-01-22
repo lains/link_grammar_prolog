@@ -3444,7 +3444,7 @@ context_list*      root_context_list;
 
 foreign_t pl_get_linkage(term_t linkage_set_handle,
 			 term_t t_result,
-			 foreign_t handle) {
+			 control_t handle) {
 
 pl_get_linkage_context        *context;
 
@@ -3578,7 +3578,7 @@ opts_linked_list_object       *opts_object; /* Linked object corresponding to th
     }
     break;
  
-  case PL_CUTTED:
+  case PL_PRUNED:
     //  //@@ Breakpoint 5 Entering pl_get_linkage for cut //Lionel!!!
     context=PL_foreign_context_address(handle);
     //  //@! "Breakpoint 6 Got cut structure with context at %p", context //Lionel!!!
