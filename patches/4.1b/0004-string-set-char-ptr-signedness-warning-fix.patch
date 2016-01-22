@@ -1,0 +1,13 @@
+--- a/src/string-set.c	2016-01-22 22:14:10.071168299 +0100
++++ b/src/string-set.c	2016-01-22 22:15:00.782522900 +0100
+@@ -86,8 +86,8 @@
+     /* lookup the given string in the table.  Return a pointer
+        to the place it is, or the place where it should be. */
+     int h, s, i;
+-    h = hash_string(str, ss);
+-    s = stride_hash_string(str, ss);
++    h = hash_string((unsigned char *)str, ss);
++    s = stride_hash_string((unsigned char *)str, ss);
+     for (i=h; 1; i = (i + s)%(ss->size)) {
+ 	if ((ss->table[i] == NULL) || (strcmp(ss->table[i], str) == 0)) return i;
+     }
