@@ -125,6 +125,11 @@ install: lgp.$(SOEXT)
 	install -d data
 	(DST=`pwd`/data/ && cd lg-source/$(LINK_GRAMMAR_DATA_DIR); cp -r * "$$DST")
 
+ifeq ($(PACK_VERSION),)
+pack:
+	$(error Could not retrieve PACK_VERSION from pack.pl file)
+else
+TARGET_ZIP_PACKAGE:=$(TOPDIR)/link_grammar_prolog-$(PACK_VERSION).zip
 ifeq ($(SWIPL_ARCH),)
 $(TARGET_ZIP_PACKAGE):
 	$(error Could not guess SWIPL_ARCH. Either force its value by setting variable SWIPL_ARCH or modify the PATH to be able to execute the swipl command (or provide its full path in variable SWIPL))
@@ -140,12 +145,6 @@ lib/$(SWIPL_ARCH)/lgp.$(SOEXT): lgp.$(SOEXT)
 		cp $< $@; \
 	fi
 endif
-
-ifeq ($(PACK_VERSION),)
-pack:
-	$(error Could not retrieve PACK_VERSION from pack.pl file)
-else
-TARGET_ZIP_PACKAGE:=$(TOPDIR)/link_grammar_prolog-$(PACK_VERSION).zip
 pack: $(TARGET_ZIP_PACKAGE)
 endif
 

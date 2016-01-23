@@ -32,7 +32,7 @@ $(error Missing TOPDIR variable (required by Makefile.inc))
 endif
 
 SWIPL?=swipl
-SWIPL_ARCH:=$(shell $(SWIPL) -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)' 2>/dev/null)
+SWIPL_ARCH:=$(shell "$(SWIPL)" -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)' 2>/dev/null)
 
 ifeq ($(LINK_GRAMMAR_VERSION),4.1b)
 SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b.tar.gz
