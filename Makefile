@@ -112,6 +112,8 @@ clean-source:
 clean: clean-source
 	rm -rf lg-source lg-source-archive-$(LINK_GRAMMAR_VERSION).*
 	rm -f lgp.$(SOEXT)
+	rm -rf release
+	rm -rf lib
 ifneq ($(SWIPL_ARCH),)
 	rm -f lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
 endif
@@ -134,16 +136,27 @@ ifeq ($(SWIPL_ARCH),)
 $(TARGET_ZIP_PACKAGE):
 	$(error Could not guess SWIPL_ARCH. Either force its value by setting variable SWIPL_ARCH or modify the PATH to be able to execute the swipl command (or provide its full path in variable SWIPL))
 else
-$(TARGET_ZIP_PACKAGE): lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
-	@echo Building package $(TARGET_ZIP_PACKAGE)
-	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print0 | xargs -0 zip -u $@
-
 lib/$(SWIPL_ARCH)/lgp.$(SOEXT): lgp.$(SOEXT)
 	mkdir -p lib/$(SWIPL_ARCH)
 	@if ! cmp --quiet $< $@; then \
 		echo cp $< $@; \
 		cp $< $@; \
 	fi
+
+release/$(PACK_VERSION).zip: lib/$(SWIPL_ARCH)/lgp.$(SOEXT)
+	mkdir -p release/
+	rm -f ./$@ || :
+	find ./ -name '.git*' -prune -o -path './lg-source*' -prune -o -path './release/' -prune -o -path './link_grammar_prolog-*.zip' -prune -o -path './lgp.$(SOEXT)' -prune -o -type f -print0 | xargs -0 zip -u $@
+
+$(TARGET_ZIP_PACKAGE): release/$(PACK_VERSION).zip
+	@echo Building package $@
+	rm -rf ./release/link_grammar_prolog-$(PACK_VERSION)/ || :
+	test -f $@ && rm -f $@
+	mkdir -p release/link_grammar_prolog-$(PACK_VERSION)/
+	(cd release/link_grammar_prolog-$(PACK_VERSION)/ && unzip ../$(PACK_VERSION).zip >/dev/null)
+	(cd release;zip -r $@ link_grammar_prolog-$(PACK_VERSION)/)
+	rm -rf ./release/link_grammar_prolog-$(PACK_VERSION)/ || :
+
 endif
 pack: $(TARGET_ZIP_PACKAGE)
 endif
