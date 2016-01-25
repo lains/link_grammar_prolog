@@ -78,8 +78,7 @@
 
 :- use_module(library(shlib)).
 
-:- initialization
-   load_foreign_library(foreign(lgp), install_lgp).
+:- use_foreign_library(foreign(lgp), install_lgp).
 
 /**
  * @name get_handles_dictionaries/1

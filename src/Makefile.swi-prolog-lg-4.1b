@@ -119,7 +119,7 @@ $(OBJ)/%.o: $(SRC)/%.c $(INCLUDES)
 	$(CC) -c $(CFLAGS) -I$(INC) -o $@ $<
 
 ./lgp_local.pl: ./lgp.pl
-	sed -e 's/\(load_foreign_library(\)foreign[(]\([^)]*\)[)]/\1\2/' $< > $@
+	sed -e 's/\(use_foreign_library(\)foreign[(]\([^)]*\)[)]/\1\2/' $< > $@
 
 check: $(BIN)/lgp.$(SOEXT) ./lgp_local.pl ./lgp_lib_test.pl
 	"$(SWIPL)" -g "['lgp_lib_test'],go,halt" -t 'halt(1)'
