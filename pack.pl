@@ -1,5 +1,5 @@
 name('link_grammar_prolog').
-title('A binding to use the Link Grammar library from SWI-Prolog').
+title('A Link Grammar library binding (syntactic parser based on link grammar) for SWI-Prolog').
 version('4.1.0.3').
 home('https://github.com/lains/link_grammar_prolog').
 author('Lionel Ains', 'lains@gmx.net').
