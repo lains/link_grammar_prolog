@@ -87,10 +87,12 @@ $(LINK_GRAMMAR_APPLIED_PATCHES_DIR): patches/$(LINK_GRAMMAR_VERSION)/
 	cp patches/$(LINK_GRAMMAR_VERSION)/*.patch $(LINK_GRAMMAR_APPLIED_PATCHES_DIR) || :
 
 apply-patches: $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)
-	@for p in $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)/*.patch; do \
-		echo "Applying patch \"$$p\""; \
-		patch -d "lg-source/$(LINK_GRAMMAR_BUILD_DIR)" -p1 < "$$p" || exit 1; \
-	done;
+	@if ls $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)/*.patch 2>/dev/null; then \
+		for p in $(LINK_GRAMMAR_APPLIED_PATCHES_DIR)/*.patch; do \
+			echo "Applying patch \"$$p\""; \
+			patch -d "lg-source/$(LINK_GRAMMAR_BUILD_DIR)" -p1 < "$$p" || exit 1; \
+		done; \
+	fi
 
 patch:
 	@if ! test -e $(LINK_GRAMMAR_APPLIED_PATCHES_DIR); then \
