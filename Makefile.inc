@@ -34,14 +34,16 @@ endif
 SWIPL?=swipl
 SWIPL_ARCH:=$(shell "$(SWIPL)" -g "current_prolog_flag(arch, Arch),write(Arch),halt" -t 'halt(1)' 2>/dev/null)
 
+# Original CMU parser sources
 ifeq ($(LINK_GRAMMAR_VERSION),4.1b)
 SRC_URL?=http://www.link.cs.cmu.edu/link/ftp-site/link-grammar/link-4.1b/unix/link-4.1b.tar.gz
 LINK_GRAMMAR_BUILD_DIR?=link-4.1b
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
-ifeq ($(LINK_GRAMMAR_VERSION),5.3.2)
-SRC_URL?=https://github.com/opencog/link-grammar/archive/link-grammar-5.3.2.tar.gz
-LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-5.3.2
+# New parser sources from opencog on github
+ifeq ($(LINK_GRAMMAR_VERSION),5.7.0)
+SRC_URL?=https://github.com/opencog/link-grammar/archive/link-grammar-$(LINK_GRAMMAR_VERSION).tar.gz
+LINK_GRAMMAR_BUILD_DIR?=link-grammar-link-grammar-(LINK_GRAMMAR_VERSION)
 LINK_GRAMMAR_DATA_DIR?=$(LINK_GRAMMAR_BUILD_DIR)/data
 endif
 
