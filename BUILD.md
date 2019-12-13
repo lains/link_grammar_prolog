@@ -76,11 +76,11 @@ make
 
 This will lead to the creation of the shared library `lgp.so` or `lgp.dll` in the root of the repository.
 This file is the C-library part of the binding (the foreign library in SWI-Prolog terms).
-This shared library will be needed by SWI-Prolog at run time (it is used by the Prolog engine when loading the Prolog binding module "lgp_lib.pl")
+This shared library will be needed by SWI-Prolog at run time (it is used by the Prolog engine when loading the Prolog binding module "lgp_lib.pl").
 
 You will have to copy this file into a folder where SWI-Prolog will search for shared libraries.
-In case Cygwin is in used, you may also have to copy over the Cygwin library (`cygwin*.dll`)
-The `lgp_lib.pl` file (provided in the folder `SWI-Prolog_home_dir/` within the source) will also probably needs to be moved, or swpil has to be started from this exact folder in order to find `lgp_lib.pl`.
+In case Cygwin is in used, you may also have to copy over the Cygwin library (`cygwin*.dll`).
+The `lgp_lib.pl` file (provided in the folder `SWI-Prolog_home_dir/` within the source) will also probably needs to be moved, or swipl has to be started from this exact folder in order to find `lgp_lib.pl`.
 Typically, this is the SWI-Prolog's home directory.
 
 ## Running unit tests
